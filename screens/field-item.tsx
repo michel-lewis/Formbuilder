@@ -70,7 +70,7 @@ export const FieldItem = ({
     }
 
   const newField: FormFieldCustomType | undefined = Object.values(formFieldsInstances).find(
-      (field) => field.technical.inputType === variant
+      (field) => field.technical.id === variant
   ) || formFieldsInstances.input;
 
     setFormFields((prevFields) => {
