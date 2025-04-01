@@ -10,23 +10,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Form, FormField, FormItem, FormControl } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import If from '@/components/ui/if'
-import { FormFieldType } from '@/types'
-
-import { Files } from 'lucide-react'
+// import { FormFieldType } from '@/types'
+// import { Files } from 'lucide-react'
 import {
   generateZodSchema,
   generateFormCode,
   generateDefaultValues,
 } from '@/screens/generate-code-parts'
 import { formatJSXCode } from '@/lib/utils'
+import { FormFieldCustomType } from '@/constants/interfarce'
 
-export type FormFieldOrGroup = FormFieldType | FormFieldType[]
+export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
 export type FormPreviewProps = {
   formFields: FormFieldOrGroup[]
 }
 
 const renderFormFields = (fields: FormFieldOrGroup[], form: any) => {
+  console.log("formfields value ", fields)
   return fields.map((fieldOrGroup, index) => {
     if (Array.isArray(fieldOrGroup)) {
       // Calculate column span based on number of fields in the group
@@ -45,9 +46,9 @@ const renderFormFields = (fields: FormFieldOrGroup[], form: any) => {
         <div key={index} className="grid grid-cols-12 gap-4">
           {fieldOrGroup.map((field, subIndex) => (
             <FormField
-              key={field.name}
+              key={field.ui.label}
               control={form.control}
-              name={field.name}
+              name={field.ui.label}
               render={({ field: formField }) => (
                 <FormItem
                   className={`col-span-${getColSpan(fieldOrGroup.length)}`}
@@ -67,11 +68,12 @@ const renderFormFields = (fields: FormFieldOrGroup[], form: any) => {
         </div>
       )
     } else {
+      console.log("renderFormField output:", renderFormField(fieldOrGroup, form))      
       return (
         <FormField
           key={index}
           control={form.control}
-          name={fieldOrGroup.name}
+          name={fieldOrGroup.ui.label}
           render={({ field: formField }) => (
             <FormItem className="col-span-12">
               <FormControl>
@@ -164,7 +166,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
           />
         </TabsContent>
         <TabsContent value="code">
-          <If
+          {/* <If
             condition={formFields.length > 0}
             render={() => (
               <div className="relative">
@@ -213,7 +215,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
                 <p>No form element selected yet.</p>
               </div>
             )}
-          />
+          /> */}
         </TabsContent>
       </Tabs>
     </div>

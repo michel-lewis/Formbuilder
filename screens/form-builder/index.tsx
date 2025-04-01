@@ -16,41 +16,34 @@ import { FormPreview } from '@/screens/form-preview'
 import { EditFieldDialog } from '@/screens/edit-field-dialog'
 import EmptyListSvg from '@/assets/oc-thinking.svg'
 import Editor from '@/components/editor/editor'
+import { FormFieldCustomType } from '@/constants/interfarce'
+import {formFieldsInstances} from '@/constants/interfaces-instances';
 
-export type FormFieldOrGroup = FormFieldType | FormFieldType[]
+export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
 export default function FormBuilder() {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const [formFields, setFormFields] = useState<FormFieldOrGroup[]>([])
-  const [selectedField, setSelectedField] = useState<FormFieldType | null>(null)
+  const [selectedField, setSelectedField] = useState<FormFieldCustomType | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const addFormField = (variant: string, index: number) => {
+  const addFormField = (variant: string, index: number, type?: FormFieldCustomType) => {
+    console.log("add form fields variant type next ", type)
     const newFieldName = `name_${Math.random().toString().slice(-10)}`
 
-    const { label, description, placeholder } = defaultFieldConfig[variant] || {
+    const { label, description, placeholder, customType } = defaultFieldConfig[variant] || {
       label: '',
       description: '',
       placeholder: '',
     }
 
-    const newField: FormFieldType = {
-      checked: true,
-      description: description || '',
-      disabled: false,
-      label: label || newFieldName,
-      name: newFieldName,
-      onChange: () => {},
-      onSelect: () => {},
-      placeholder: placeholder || 'Placeholder',
-      required: true,
-      rowIndex: index,
-      setValue: () => {},
-      type: '',
-      value: '',
-      variant,
-    }
+    const newField: FormFieldCustomType | undefined =formFieldsInstances[variant] || formFieldsInstances.input;
+
+  console.log('new field ', Object.values(formFieldsInstances).find(
+    (field) => field.technical.inputType === variant
+), variant)
+
     setFormFields([...formFields, newField])
   }
 
@@ -67,7 +60,7 @@ export default function FormBuilder() {
         if (Array.isArray(field)) {
           const result = search(field, [...currentPath, i])
           if (result) return result
-        } else if (field.name === name) {
+        } else if (field.ui.label === name) {
           return [...currentPath, i]
         }
       }
@@ -76,7 +69,7 @@ export default function FormBuilder() {
     return search(fields, [])
   }
 
-  const updateFormField = (path: number[], updates: Partial<FormFieldType>) => {
+  const updateFormField = (path: number[], updates: Partial<FormFieldCustomType>) => {
     const updatedFields = JSON.parse(JSON.stringify(formFields)) // Deep clone
     let current: any = updatedFields
     for (let i = 0; i < path.length - 1; i++) {
@@ -89,14 +82,14 @@ export default function FormBuilder() {
     setFormFields(updatedFields)
   }
 
-  const openEditDialog = (field: FormFieldType) => {
+  const openEditDialog = (field: FormFieldCustomType) => {
     setSelectedField(field)
     setIsDialogOpen(true)
   }
 
-  const handleSaveField = (updatedField: FormFieldType) => {
+  const handleSaveField = (updatedField: FormFieldCustomType) => {
     if (selectedField) {
-      const path = findFieldPath(formFields, selectedField.name)
+      const path = findFieldPath(formFields, selectedField.ui.label!)
       if (path) {
         updateFormField(path, updatedField)
       }
@@ -107,7 +100,7 @@ export default function FormBuilder() {
   const FieldSelectorWithSeparator = ({
     addFormField,
   }: {
-    addFormField: (variant: string, index?: number) => void
+    addFormField: (variant: string, index?: number, type?: FormFieldCustomType) => void
   }) => (
     <div className="flex flex-col md:flex-row gap-3">
       <FieldSelector addFormField={addFormField} />
@@ -137,8 +130,8 @@ export default function FormBuilder() {
           <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-8 md:px-5 h-full">
             <div className="w-full h-full col-span-1 md:space-x-3 md:max-h-[75vh] flex flex-col md:flex-row ">
               <FieldSelectorWithSeparator
-                addFormField={(variant: string, index: number = 0) =>
-                  addFormField(variant, index)
+                addFormField={(variant: string, index: number = 0, type?: FormFieldCustomType) =>
+                  addFormField(variant, index, type)
                 }
               />
               <div className="overflow-y-auto flex-1 ">
@@ -162,8 +155,8 @@ export default function FormBuilder() {
         otherwise={() => (
           <div className="flex flex-col md:flex-row items-center gap-3 md:px-5">
             <FieldSelectorWithSeparator
-              addFormField={(variant: string, index: number = 0) =>
-                addFormField(variant, index)
+              addFormField={(variant: string, index: number = 0, type?: FormFieldCustomType) =>
+                addFormField(variant, index, type)
               }
             />
             <EmptyListSvg className="mx-auto" />

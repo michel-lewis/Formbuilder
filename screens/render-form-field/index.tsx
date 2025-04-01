@@ -71,6 +71,7 @@ import LocationSelector from '@/components/ui/location-input'
 import SignatureInput from '@/components/ui/signature-input'
 import { Rating } from '@/components/ui/rating'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { FormFieldCustomType } from '@/constants/interfarce'
 
 const languages = [
   { label: 'English', value: 'en' },
@@ -113,9 +114,9 @@ const FileSvgDraw = () => {
   )
 }
 
-export const renderFormField = (field: FormFieldType, form: any) => {
-  const [checked, setChecked] = useState<boolean>(field.checked)
-  const [value, setValue] = useState<any>(field.value)
+export const renderFormField = (field: FormFieldCustomType, form: any) => {
+  const [checked, setChecked] = useState<boolean>(true)
+  const [value, setValue] = useState<any>("")
   const [selectedValues, setSelectedValues] = useState<string[]>(['React'])
   const [tagsValue, setTagsValue] = useState<string[]>([])
   const [files, setFiles] = useState<File[] | null>(null) // Initialize to null or use [] for an empty array
@@ -135,14 +136,14 @@ export const renderFormField = (field: FormFieldType, form: any) => {
     multiple: true,
   }
 
-  switch (field.variant) {
+  switch (field.technical.id) {
     case 'Checkbox':
       return (
         <FormItem className="flex flex-col">
           <div
             className={cn(
               'flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4',
-              field.className,
+              // field.className,
             )}
           >
             <FormControl>
@@ -151,12 +152,13 @@ export const renderFormField = (field: FormFieldType, form: any) => {
                 onCheckedChange={() => {
                   setChecked(!checked)
                 }}
-                disabled={field.disabled}
+                disabled={field.ui.disabled}
+                required={true}
               />
             </FormControl>
             <div className="space-y-1 leading-none">
-              <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-              <FormDescription>{field.description}</FormDescription>
+              <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
+              <FormDescription>{field.ui.hint}</FormDescription>
             </div>
           </div>
           <FormMessage />
@@ -166,7 +168,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
       return (
         <FormItem className="flex flex-col">
           <div>
-            <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+            <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           </div>{' '}
           <Popover>
             <PopoverTrigger asChild>
@@ -199,7 +201,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
                         key={language.value}
                         onSelect={() => {
                           setValue(language.value)
-                          form.setValue(field.name, language.value)
+                          form.setValue(field.ui.label, language.value)
                         }}
                       >
                         <Check
@@ -218,7 +220,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
               </Command>
             </PopoverContent>
           </Popover>
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
@@ -226,7 +228,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
       return (
         <FormItem className="flex flex-col">
           <div>
-            <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+            <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           </div>
           <Popover>
             <PopoverTrigger asChild>
@@ -249,7 +251,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
                 selected={date}
                 onSelect={(newDate) => {
                   setDate(newDate)
-                  form.setValue(field.name, newDate, {
+                  form.setValue(field.ui.label, newDate, {
                     shouldValidate: true,
                     shouldDirty: true,
                   })
@@ -258,7 +260,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
               />
             </PopoverContent>
           </Popover>
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
@@ -266,7 +268,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
       return (
         <FormItem className="flex flex-col">
           <div>
-            <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+            <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           </div>
           <DatetimePicker
             {...field}
@@ -274,7 +276,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
             // onChange={setDatetime}
             onChange={(newDate) => {
               setDatetime(newDate)
-              form.setValue(field.name, newDate, {
+              form.setValue(field.ui.label, newDate, {
                 shouldValidate: true,
                 shouldDirty: true,
               })
@@ -284,14 +286,14 @@ export const renderFormField = (field: FormFieldType, form: any) => {
               ['hours', 'minutes', 'am/pm'],
             ]}
           />
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
     case 'File Input':
       return (
         <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+          <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           <FormControl>
             <FileUploader
               value={files}
@@ -319,29 +321,29 @@ export const renderFormField = (field: FormFieldType, form: any) => {
               </FileUploaderContent>
             </FileUploader>
           </FormControl>
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
     case 'Input':
       return (
         <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+          <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           <FormControl>
             <Input
-              placeholder={field.placeholder}
-              disabled={field.disabled}
-              type={field?.type}
+              placeholder={field.ui.hint}
+              disabled={field.ui.disabled}
+              type={field?.technical.inputType}
             />
           </FormControl>
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
     case 'Input OTP':
       return (
         <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+          <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           <FormControl>
             <InputOTP maxLength={6}>
               <InputOTPGroup>
@@ -357,7 +359,7 @@ export const renderFormField = (field: FormFieldType, form: any) => {
               </InputOTPGroup>
             </InputOTP>
           </FormControl>
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
@@ -365,35 +367,35 @@ export const renderFormField = (field: FormFieldType, form: any) => {
       return (
         <FormItem className="flex flex-col">
           <div>
-            <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+            <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           </div>
           <LocationSelector
             onCountryChange={(country) => {
               setCountryName(country?.name || '')
-              form.setValue(field.name, [country?.name || '', stateName || ''])
+              form.setValue(field.ui.label, [country?.name || '', stateName || ''])
             }}
             onStateChange={(state) => {
               setStateName(state?.name || '')
-              form.setValue(field.name, [
-                form.getValues(field.name)[0] || '',
+              form.setValue(field.ui.label, [
+                form.getValues(field.ui.label)[0] || '',
                 state?.name || '',
               ])
             }}
           />
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
     case 'Multi Select':
       return (
         <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+          <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
           <FormControl>
             <MultiSelector
               values={selectedValues}
               onValuesChange={(newValues) => {
                 setSelectedValues(newValues)
-                form.setValue(field.name, newValues, {
+                form.setValue(field.ui.label, newValues, {
                   shouldValidate: true,
                   shouldDirty: true,
                 })
@@ -412,15 +414,16 @@ export const renderFormField = (field: FormFieldType, form: any) => {
               </MultiSelectorContent>
             </MultiSelector>
           </FormControl>
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
     case 'Select':
       return (
         <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <Select onValueChange={field.onChange}>
+          <FormLabel>{field.ui.label}</FormLabel> {field.validation.required && '*'}
+          {/* Todo : vérifier ici  */}
+          <Select onValueChange={()=>{}}>
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder="Select a verified email to display" />
@@ -432,227 +435,227 @@ export const renderFormField = (field: FormFieldType, form: any) => {
               <SelectItem value="m@support.com">m@support.com</SelectItem>
             </SelectContent>
           </Select>
-          <FormDescription>{field.description}</FormDescription>
+          <FormDescription>{field.ui.hint}</FormDescription>
           <FormMessage />
         </FormItem>
       )
-    case 'Slider':
-      const min = field.min || 0
-      const max = field.max || 100
-      const step = field.step || 1
-      const defaultValue = 5
+    // case 'Slider':
+    //   const min = field.min || 0
+    //   const max = field.max || 100
+    //   const step = field.step || 1
+    //   const defaultValue = 5
 
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <Slider
-              min={min}
-              max={max}
-              step={step}
-              value={sliderValue}
-              onValueChange={(value) => {
-                setSliderValue(value)
-              }} // Update to set the first value as a number
-            />
-          </FormControl>
-          <FormDescription className="py-3">
-            {field.description} Selected value is {value || defaultValue},
-            minimun valus is {min}, maximim values is {max}, step size is {step}
-          </FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Signature Input':
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <SignatureInput
-              canvasRef={canvasRef}
-              onSignatureChange={(signature) => {
-                form.setValue(field.name, signature || undefined)
-              }}
-            />
-          </FormControl>
-          <FormDescription className="py-3">
-            {field.description}
-          </FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Smart Datetime Input':
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <SmartDatetimeInput
-              locale={field.locale as any}
-              hour12={field.hour12}
-              value={smartDatetime}
-              onValueChange={(newDate) => {
-                setSmartDatetime(newDate)
-                form.setValue(field.name, newDate, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }}
-              placeholder="e.g. tomorrow at 3pm"
-            />
-          </FormControl>
-          <FormDescription className="py-3">
-            {field.description}
-          </FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Switch':
-      return (
-        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-            <FormDescription>{field.description}</FormDescription>
-          </div>
-          <FormControl>
-            <Switch
-              checked={checked}
-              onCheckedChange={() => {
-                setChecked(!checked)
-              }}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Tags Input':
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <TagsInput
-              value={tagsValue}
-              onValueChange={(newTags) => {
-                setTagsValue(newTags)
-                form.setValue(field.name, newTags, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }}
-              placeholder="Enter your tags"
-            />
-          </FormControl>
-          <FormDescription>{field.description}</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Textarea':
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <Textarea
-              placeholder={field.placeholder}
-              className="resize-none"
-              // {...field}
-            />
-          </FormControl>
-          <FormDescription>{field.description}</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Password':
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <PasswordInput
-              value={password}
-              placeholder={field.placeholder}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setPassword(e.target.value)
-                form.setValue(field.name, e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }}
-            />
-          </FormControl>
-          <FormDescription>{field.description}</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Phone':
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <PhoneInput
-              defaultCountry="TR"
-              onChange={(phoneNumber) => {
-                form.setValue(field.name, phoneNumber, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }}
-            />
-          </FormControl>
-          <FormDescription>{field.description}</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'Rating':
-      return (
-        <FormItem>
-          <FormLabel>{field.label}</FormLabel> {field.required && '*'}
-          <FormControl>
-            <Rating
-              value={rating}
-              onChange={(value) => {
-                setRating(value)
-                form.setValue(field.name, value.toString(), {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }}
-            />
-          </FormControl>
-          <FormDescription>{field.description}</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
-    case 'RadioGroup':
-      return (
-        <FormItem className="space-y-3">
-          <FormLabel>{field.label}</FormLabel>
-          <FormControl>
-            <RadioGroup
-              onValueChange={field.onChange}
-              className="flex flex-col space-y-1"
-            >
-              {
-                [ 
-                  ["Male", "male"], 
-                  ["Female", "female"], 
-                  ["Other", "other"] 
-                ].map((option, index)=>{
-                  return(
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value={option[1]} />
-                      </FormControl>
-                      <FormLabel className="font-normal">
-                        {option[0]}
-                      </FormLabel>
-                    </FormItem>
-                  )
-                })
-              }
-            </RadioGroup>
-          </FormControl>
-          <FormDescription>{field.description}</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <Slider
+    //           min={min}
+    //           max={max}
+    //           step={step}
+    //           value={sliderValue}
+    //           onValueChange={(value) => {
+    //             setSliderValue(value)
+    //           }} // Update to set the first value as a number
+    //         />
+    //       </FormControl>
+    //       <FormDescription className="py-3">
+    //         {field.description} Selected value is {value || defaultValue},
+    //         minimun valus is {min}, maximim values is {max}, step size is {step}
+    //       </FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Signature Input':
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <SignatureInput
+    //           canvasRef={canvasRef}
+    //           onSignatureChange={(signature) => {
+    //             form.setValue(field.name, signature || undefined)
+    //           }}
+    //         />
+    //       </FormControl>
+    //       <FormDescription className="py-3">
+    //         {field.description}
+    //       </FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Smart Datetime Input':
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <SmartDatetimeInput
+    //           locale={field.locale as any}
+    //           hour12={field.hour12}
+    //           value={smartDatetime}
+    //           onValueChange={(newDate) => {
+    //             setSmartDatetime(newDate)
+    //             form.setValue(field.name, newDate, {
+    //               shouldValidate: true,
+    //               shouldDirty: true,
+    //             })
+    //           }}
+    //           placeholder="e.g. tomorrow at 3pm"
+    //         />
+    //       </FormControl>
+    //       <FormDescription className="py-3">
+    //         {field.description}
+    //       </FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Switch':
+    //   return (
+    //     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+    //       <div className="space-y-0.5">
+    //         <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //         <FormDescription>{field.description}</FormDescription>
+    //       </div>
+    //       <FormControl>
+    //         <Switch
+    //           checked={checked}
+    //           onCheckedChange={() => {
+    //             setChecked(!checked)
+    //           }}
+    //         />
+    //       </FormControl>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Tags Input':
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <TagsInput
+    //           value={tagsValue}
+    //           onValueChange={(newTags) => {
+    //             setTagsValue(newTags)
+    //             form.setValue(field.name, newTags, {
+    //               shouldValidate: true,
+    //               shouldDirty: true,
+    //             })
+    //           }}
+    //           placeholder="Enter your tags"
+    //         />
+    //       </FormControl>
+    //       <FormDescription>{field.description}</FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Textarea':
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <Textarea
+    //           placeholder={field.placeholder}
+    //           className="resize-none"
+    //           // {...field}
+    //         />
+    //       </FormControl>
+    //       <FormDescription>{field.description}</FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Password':
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <PasswordInput
+    //           value={password}
+    //           placeholder={field.placeholder}
+    //           onChange={(e: ChangeEvent<HTMLInputElement>) => {
+    //             setPassword(e.target.value)
+    //             form.setValue(field.name, e.target.value, {
+    //               shouldValidate: true,
+    //               shouldDirty: true,
+    //             })
+    //           }}
+    //         />
+    //       </FormControl>
+    //       <FormDescription>{field.description}</FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Phone':
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <PhoneInput
+    //           defaultCountry="TR"
+    //           onChange={(phoneNumber) => {
+    //             form.setValue(field.name, phoneNumber, {
+    //               shouldValidate: true,
+    //               shouldDirty: true,
+    //             })
+    //           }}
+    //         />
+    //       </FormControl>
+    //       <FormDescription>{field.description}</FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'Rating':
+    //   return (
+    //     <FormItem>
+    //       <FormLabel>{field.label}</FormLabel> {field.required && '*'}
+    //       <FormControl>
+    //         <Rating
+    //           value={rating}
+    //           onChange={(value) => {
+    //             setRating(value)
+    //             form.setValue(field.name, value.toString(), {
+    //               shouldValidate: true,
+    //               shouldDirty: true,
+    //             })
+    //           }}
+    //         />
+    //       </FormControl>
+    //       <FormDescription>{field.description}</FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
+    // case 'RadioGroup':
+    //   return (
+    //     <FormItem className="space-y-3">
+    //       <FormLabel>{field.label}</FormLabel>
+    //       <FormControl>
+    //         <RadioGroup
+    //           onValueChange={field.onChange}
+    //           className="flex flex-col space-y-1"
+    //         >
+    //           {
+    //             [ 
+    //               ["Male", "male"], 
+    //               ["Female", "female"], 
+    //               ["Other", "other"] 
+    //             ].map((option, index)=>{
+    //               return(
+    //                 <FormItem className="flex items-center space-x-3 space-y-0">
+    //                   <FormControl>
+    //                     <RadioGroupItem value={option[1]} />
+    //                   </FormControl>
+    //                   <FormLabel className="font-normal">
+    //                     {option[0]}
+    //                   </FormLabel>
+    //                 </FormItem>
+    //               )
+    //             })
+    //           }
+    //         </RadioGroup>
+    //       </FormControl>
+    //       <FormDescription>{field.description}</FormDescription>
+    //       <FormMessage />
+    //     </FormItem>
+    //   )
     default:
       return null
   }

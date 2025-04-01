@@ -1,22 +1,23 @@
 import { z, ZodTypeAny } from 'zod'
 import { FormFieldType } from '@/types'
 import { generateCodeSnippet } from '@/screens/generate-code-field'
+import { FormFieldCustomType } from '@/constants/interfarce'
 
-type FormFieldOrGroup = FormFieldType | FormFieldType[]
+type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
 export const generateZodSchema = (
   formFields: FormFieldOrGroup[],
 ): z.ZodObject<any> => {
   const schemaObject: Record<string, z.ZodTypeAny> = {}
 
-  const processField = (field: FormFieldType): void => {
-    if (field.variant === 'Label') return
+  const processField = (field: FormFieldCustomType): void => {
+    if (field.technical.inputType === 'Label') return
 
     let fieldSchema: z.ZodTypeAny
 
-    switch (field.variant) {
+    switch (field.technical.inputType) {
       case 'Checkbox':
-        if (field.required === true) {
+        if (field.validation.required === true) {
           fieldSchema = z.boolean().refine((value) => value === true, {
             message: 'Required',
           })
@@ -30,17 +31,17 @@ export const generateZodSchema = (
       case 'Datetime Picker':
         fieldSchema = z.coerce.date()
         break
-      case 'Input':
-        if (field.type === 'email') {
-          fieldSchema = z.string().email()
-          break
-        } else if (field.type === 'number') {
-          fieldSchema = z.coerce.number()
-          break
-        } else {
-          fieldSchema = z.string().min(1, 'Required')
-          break
-        }
+      // case 'Input':
+      //   if (field.type === 'email') {
+      //     fieldSchema = z.string().email()
+      //     break
+      //   } else if (field.type === 'number') {
+      //     fieldSchema = z.coerce.number()
+      //     break
+      //   } else {
+      //     fieldSchema = z.string().min(1, 'Required')
+      //     break
+      //   }
       case 'Location Input':
         fieldSchema = z.tuple([
           z.string({
@@ -85,23 +86,23 @@ export const generateZodSchema = (
         fieldSchema = z.string()
     }
 
-    if (field.min !== undefined && 'min' in fieldSchema) {
-      fieldSchema = (fieldSchema as any).min(
-        field.min,
-        `Must be at least ${field.min}`,
-      )
-    }
-    if (field.max !== undefined && 'max' in fieldSchema) {
-      fieldSchema = (fieldSchema as any).max(
-        field.max,
-        `Must be at most ${field.max}`,
-      )
-    }
+    // if (field.min !== undefined && 'min' in fieldSchema) {
+    //   fieldSchema = (fieldSchema as any).min(
+    //     field.min,
+    //     `Must be at least ${field.min}`,
+    //   )
+    // }
+    // if (field.max !== undefined && 'max' in fieldSchema) {
+    //   fieldSchema = (fieldSchema as any).max(
+    //     field.max,
+    //     `Must be at most ${field.max}`,
+    //   )
+    // }
 
-    if (field.required !== true) {
-      fieldSchema = fieldSchema.optional()
-    }
-    schemaObject[field.name] = fieldSchema as ZodTypeAny // Ensure fieldSchema is of type ZodTypeAny
+    // if (field.required !== true) {
+    //   fieldSchema = fieldSchema.optional()
+    // }
+    // schemaObject[field.name] = fieldSchema as ZodTypeAny // Ensure fieldSchema is of type ZodTypeAny
   }
 
   formFields.flat().forEach(processField)
@@ -201,8 +202,8 @@ export const generateImports = (
     'import {\n  Form,\n  FormControl,\n  FormDescription,\n  FormField,\n  FormItem,\n  FormLabel,\n  FormMessage,\n} from "@/components/ui/form"',
   ])
 
-  const processField = (field: FormFieldType) => {
-    switch (field.variant) {
+  const processField = (field: FormFieldCustomType) => {
+    switch (field.technical.id) {
       case 'Combobox':
         importSet.add(
           'import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command"',
@@ -229,8 +230,8 @@ export const generateImports = (
         importSet.add(
           'import { SmartDatetimeInput } from "@/components/ui/smart-datetime-input"',
         )
-        field.locale &&
-          importSet.add(`import { ${field.locale} } from "date-fns/locale"`)
+        field.ui.locale &&
+          importSet.add(`import { ${field.ui.locale} } from "date-fns/locale"`)
         break
       case 'File Input':
         importSet.add('import { CloudUpload, Paperclip } from "lucide-react"')
@@ -279,7 +280,7 @@ export const generateImports = (
         break
       default:
         importSet.add(
-          `import { ${field.variant} } from "@/components/ui/${field.variant.toLowerCase()}"`,
+          `import { ${field.technical.id} } from "@/components/ui/${field.technical.id.toLowerCase()}"`,
         )
         break
     }
@@ -296,7 +297,7 @@ export const generateConstants = (
   const constantSet: Set<string> = new Set()
 
   formFields.flat().forEach((field) => {
-    if (field.variant === 'Combobox') {
+    if (field.technical.id === 'Combobox') {
       constantSet.add(`const languages = [
         { label: "English", value: "en" },
         { label: "French", value: "fr" },
@@ -308,7 +309,7 @@ export const generateConstants = (
         { label: "Korean", value: "ko" },
         { label: "Chinese", value: "zh" },
       ] as const;`)
-    } else if (field.variant === 'File Input') {
+    } else if (field.technical.id === 'File Input') {
       constantSet.add(`
         const [files, setFiles] = useState<File[] | null>(null); 
 
@@ -317,12 +318,12 @@ export const generateConstants = (
           maxSize: 1024 * 1024 * 4,
           multiple: true,
         };`)
-    } else if (field.variant === 'Location Input') {
+    } else if (field.technical.id === 'Location Input') {
       constantSet.add(`
         const [countryName, setCountryName] = useState<string>('')
         const [stateName, setStateName] = useState<string>('')
         `)
-    } else if (field.variant === 'Signature Input') {
+    } else if (field.technical.id === 'Signature Input') {
       constantSet.add(`const canvasRef = useRef<HTMLCanvasElement>(null)`)
     }
   })
@@ -330,7 +331,7 @@ export const generateConstants = (
   return constantSet
 }
 
-// New function to generate defaultValues
+// // New function to generate defaultValues
 export const generateDefaultValues = (
   fields: FormFieldOrGroup[],
   existingDefaultValues: Record<string, any> = {},
@@ -339,29 +340,29 @@ export const generateDefaultValues = (
 
   fields.flat().forEach((field) => {
     // Skip if field already has a default value
-    if (defaultValues[field.name]) return
+    if (defaultValues[field.technical.id]) return
 
     // Handle field variants
-    switch (field.variant) {
+    switch (field.technical.id) {
       case 'Checkbox':
       case 'Switch':
-        defaultValues[field.name] = true
+        defaultValues[field.technical.id] = true
         break
       case 'Multi Select':
-        defaultValues[field.name] = ['React']
+        defaultValues[field.technical.id] = ['React']
         break
       case 'Tags Input':
-        defaultValues[field.name] = []
+        defaultValues[field.technical.id] = []
         break
       case 'Datetime Picker':
       case 'Date Picker':
-        defaultValues[field.name] = new Date()
+        defaultValues[field.technical.id] = new Date()
         break
       case 'Rating':
-        defaultValues[field.name] = '0'
+        defaultValues[field.technical.id] = '0'
         break
       case 'Slider':
-        defaultValues[field.name] = 5
+        defaultValues[field.technical.id] = 5
         break
     }
   })
@@ -376,17 +377,17 @@ export const generateDefaultValuesString = (
   const dateFields: string[] = []
 
   fields.flat().forEach((field) => {
-    if (field.variant === 'Multi Select') {
-      defaultValues[field.name] = ['React']
-    } else if (field.variant === 'Tags Input') {
-      defaultValues[field.name] = ['test']
+    if (field.technical.id === 'Multi Select') {
+      defaultValues[field.ui.label] = ['React']
+    } else if (field.technical.id === 'Tags Input') {
+      defaultValues[field.ui.label] = ['test']
     } else if (
-      field.variant === 'Datetime Picker' ||
-      field.variant === 'Smart Datetime Input' ||
-      field.variant === 'Date Picker'
+      field.technical.id === 'Datetime Picker' ||
+      field.technical.id === 'Smart Datetime Input' ||
+      field.technical.id === 'Date Picker'
     ) {
-      dateFields.push(field.name)
-      delete defaultValues[field.name]
+      dateFields.push(field.ui.label)
+      delete defaultValues[field.ui.label]
     }
   })
 

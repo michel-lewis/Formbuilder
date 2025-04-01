@@ -1,25 +1,26 @@
+import { FormFieldCustomType } from '@/constants/interfarce'
 import { FormFieldType } from '@/types'
 
-export const generateCodeSnippet = (field: FormFieldType) => {
-  switch (field.variant) {
+export const generateCodeSnippet = (field: FormFieldCustomType) => {
+  switch (field.technical.id) {
     case 'Checkbox':
       return `<FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.ui.label}"
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
-                  ${field.disabled ? 'disabled' : ''}
+                  ${field.validation.disabled ? 'disabled' : ''}
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>${field.label}</FormLabel>
+                <FormLabel>${field.technical.id}</FormLabel>
                 ${
-                  field.description &&
-                  `<FormDescription>${field.description}</FormDescription>`
+                  field.ui.hint &&
+                  `<FormDescription>${field.ui.hint}</FormDescription>`
                 }
                 <FormMessage />
               </div>
@@ -29,10 +30,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
     case 'Combobox':
       return `<FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -43,7 +44,7 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                         "w-[200px] justify-between",
                         !field.value && "text-muted-foreground"
                       )}
-                      ${field.disabled ? 'disabled' : ''}
+                      ${field.validation.required ? 'disabled' : ''}
                     >
                       {field.value
                         ? languages.find(
@@ -65,7 +66,7 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                             value={language.label}
                             key={language.value}
                             onSelect={() => {
-                              form.setValue("${field.name}", language.value);
+                              form.setValue("${field.ui.label}", language.value);
                             }}
                           >
                             <Check
@@ -85,8 +86,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                 </PopoverContent>
               </Popover>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
               <FormMessage />
             </FormItem>
@@ -96,10 +97,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
       <FormField
       control={form.control}
-      name="${field.name}"
+      name="${field.technical.id}"
       render={({ field }) => (
         <FormItem className="flex flex-col">
-          <FormLabel>${field.label}</FormLabel>
+          <FormLabel>${field.ui.label}</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
@@ -129,8 +130,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
             </PopoverContent>
           </Popover>
        ${
-         field.description &&
-         `<FormDescription>${field.description}</FormDescription>`
+         field.ui.hint &&
+         `<FormDescription>${field.ui.hint}</FormDescription>`
        }
           <FormMessage />
         </FormItem>
@@ -140,10 +141,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
       <FormField
       control={form.control}
-      name="${field.name}"
+      name="${field.technical.id}"
       render={({ field }) => (
         <FormItem className="flex flex-col">
-          <FormLabel>${field.label}</FormLabel>
+          <FormLabel>${field.ui.label}</FormLabel>
           <DatetimePicker
             {...field}
             format={[
@@ -152,8 +153,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
             ]}
           />
        ${
-         field.description &&
-         `<FormDescription>${field.description}</FormDescription>`
+         field.ui.hint &&
+         `<FormDescription>${field.ui.hint}</FormDescription>`
        }
           <FormMessage />
         </FormItem>
@@ -163,20 +164,20 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
               <FormControl>
                 <Input 
-                placeholder="${field.placeholder}"
-                ${field.disabled ? 'disabled' : ''}
-                type="${field.type}"
+                placeholder="${field.ui.hint}"
+                ${field.validation.disabled ? 'disabled' : ''}
+                type="${field.technical.inputType}"
                 {...field} />
               </FormControl>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
               <FormMessage />
             </FormItem>
@@ -186,10 +187,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
        <FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
               <FormControl>
                 <InputOTP maxLength={6} {...field}>
                   <InputOTPGroup>
@@ -206,8 +207,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                 </InputOTP>
               </FormControl>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
               <FormMessage />
             </FormItem>
@@ -217,25 +218,25 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
            <FormField
               control={form.control}
-              name="${field.name}"
+              name="${field.technical.id}"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>${field.label}</FormLabel>
+                  <FormLabel>${field.ui.label}</FormLabel>
                   <FormControl>
                   <LocationSelector
                     onCountryChange={(country) => {
                       setCountryName(country?.name || '')
-                      form.setValue(field.name, [country?.name || '', stateName || ''])
+                      form.setValue(field.technical.id, [country?.name || '', stateName || ''])
                     }}
                     onStateChange={(state) => {
                       setStateName(state?.name || '')
-                      form.setValue(field.name, [form.getValues(field.name)[0] || '', state?.name || ''])
+                      form.setValue(field.technical.id, [form.getValues(field.technical.id)[0] || '', state?.name || ''])
                     }}
                   />
                   </FormControl>
                   ${
-                    field.description &&
-                    `<FormDescription>${field.description}</FormDescription>`
+                    field.ui.hint &&
+                    `<FormDescription>${field.ui.hint}</FormDescription>`
                   }
                   <FormMessage />
                 </FormItem>
@@ -245,10 +246,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
            <FormField
               control={form.control}
-              name="${field.name}"
+              name="${field.technical.id}"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>${field.label}</FormLabel>
+                  <FormLabel>${field.ui.label}</FormLabel>
                   <FormControl>
                     <MultiSelector
                       values={field.value}
@@ -269,8 +270,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                     </MultiSelector>
                   </FormControl>
                   ${
-                    field.description &&
-                    `<FormDescription>${field.description}</FormDescription>`
+                    field.ui.hint &&
+                    `<FormDescription>${field.ui.hint}</FormDescription>`
                   }
                   <FormMessage />
                 </FormItem>
@@ -280,14 +281,14 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="${field.placeholder}" />
+                    <SelectValue placeholder="${field.ui.hint}" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -297,8 +298,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                 </SelectContent>
               </Select>
                 ${
-                  field.description &&
-                  `<FormDescription>${field.description}</FormDescription>`
+                  field.ui.hint &&
+                  `<FormDescription>${field.ui.hint}</FormDescription>`
                 }
               <FormMessage />
             </FormItem>
@@ -308,15 +309,15 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
             <FormField
               control={form.control}
-              name="${field.name}"
+              name="${field.technical.id}"
               render={({ field: { value, onChange } }) => (
               <FormItem>
                 <FormLabel>Price - {value}</FormLabel>
                 <FormControl>
                   <Slider
-                    min=${field.min ? field.min : '{0}'}
-                    max=${field.max ? field.max : '{100}'}
-                    step=${field.step ? field.step : '{5}'}
+                    min=${field.technical.min ? field.technical.min : '{0}'}
+                    max=${field.technical.max ? field.technical.max : '{100}'}
+                    // step=${field.technical.step ? field.technical.step : '{5}'}
                     defaultValue={[5]}
                     onValueChange={(vals) => {
                       onChange(vals[0]);
@@ -324,8 +325,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                   />
                 </FormControl>
                 ${
-                  field.description &&
-                  `<FormDescription>${field.description}</FormDescription>`
+                  field.ui.hint &&
+                  `<FormDescription>${field.ui.hint}</FormDescription>`
                 }
                 <FormMessage />
               </FormItem>
@@ -334,10 +335,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
     case 'Signature Input':
       return `<FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
           <FormItem>
-            <FormLabel>${field.label}</FormLabel>
+            <FormLabel>${field.ui.label}</FormLabel>
             <FormControl>
             <SignatureInput
               canvasRef={canvasRef}
@@ -345,8 +346,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
             />
             </FormControl>
             ${
-              field.description &&
-              `<FormDescription>${field.description}</FormDescription>`
+              field.ui.hint &&
+              `<FormDescription>${field.ui.hint}</FormDescription>`
             }
             <FormMessage />
           </FormItem>
@@ -356,22 +357,22 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
             <FormField
               control={form.control}
-              name="${field.name}"
+              name="${field.technical.id}"
               render={({ field }) => (
               <FormItem>
-                <FormLabel>${field.label}</FormLabel>
+                <FormLabel>${field.ui.label}</FormLabel>
                 <FormControl>
                   <SmartDatetimeInput
                     value={field.value}
                     onValueChange={field.onChange}
                     placeholder="e.g. Tomorrow morning 9am"
-                    ${field.locale ? `locale={${field.locale}}` : ''}
-                    ${field.hour12 ? `hour12` : ''}
+                    ${field.ui.locale ? `locale={${field.ui.locale}}` : ''}
+                    ${`hour12`}
                   />
                 </FormControl>
                 ${
-                  field.description &&
-                  `<FormDescription>${field.description}</FormDescription>`
+                  field.ui.hint &&
+                  `<FormDescription>${field.ui.hint}</FormDescription>`
                 }
                 <FormMessage />
               </FormItem>
@@ -381,14 +382,14 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
           <FormField
               control={form.control}
-              name="${field.name}"
+              name="${field.technical.id}"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel>${field.label}</FormLabel>
+                    <FormLabel>${field.ui.label}</FormLabel>
                     ${
-                      field.description &&
-                      `<FormDescription>${field.description}</FormDescription>`
+                      field.ui.hint &&
+                      `<FormDescription>${field.ui.hint}</FormDescription>`
                     }
                   </div>
                   <FormControl>
@@ -406,10 +407,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
               <FormControl>
                 <TagsInput
                   value={field.value}
@@ -418,8 +419,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                 />
               </FormControl>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
               <FormMessage />
             </FormItem>
@@ -429,20 +430,20 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="${field.placeholder}"
+                  placeholder="${field.ui.hint}"
                   className="resize-none"
                   {...field}
                 />
               </FormControl>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
               <FormMessage />
             </FormItem>
@@ -452,10 +453,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
             <FormField
               control={form.control}
-              name="${field.name}"
+              name="${field.technical.id}"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>${field.label}</FormLabel>
+                  <FormLabel>${field.ui.label}</FormLabel>
                   <FormControl>
                     <FileUploader
                       value={files}
@@ -490,7 +491,7 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                       </FileUploaderContent>
                     </FileUploader>
                   </FormControl>
-                  ${field.description ? `<FormDescription>${field.description}</FormDescription>` : ''}
+                  ${field.ui.hint ? `<FormDescription>${field.ui.hint}</FormDescription>` : ''}
                   <FormMessage />
                 </FormItem>
               )}
@@ -499,16 +500,16 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.name}"
+          name="${field.technical.id}"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="${field.placeholder}" {...field} />
+                <PasswordInput placeholder="${field.ui.hint}" {...field} />
               </FormControl>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
               <FormMessage />
             </FormItem>
@@ -519,20 +520,20 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
           <FormField
             control={form.control}
-            name="${field.name}"
+            name="${field.technical.id}"
             render={({ field }) => (
               <FormItem className="flex flex-col items-start">
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
                 <FormControl className="w-full">
                   <PhoneInput
-                    placeholder="${field.placeholder}"
+                    placeholder="${field.ui.hint}"
                     {...field}
                     defaultCountry="TR"
                   />
                 </FormControl>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
                 <FormMessage />
               </FormItem>
@@ -543,16 +544,16 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
           <FormField
             control={form.control}
-            name="${field.name}"
+            name="${field.technical.id}"
             render={({ field }) => (
               <FormItem className="flex flex-col items-start">
-              <FormLabel>${field.label}</FormLabel>
+              <FormLabel>${field.ui.label}</FormLabel>
                 <FormControl className="w-full">
                   <Rating {...field} />
                 </FormControl>
               ${
-                field.description &&
-                `<FormDescription>${field.description}</FormDescription>`
+                field.ui.hint &&
+                `<FormDescription>${field.ui.hint}</FormDescription>`
               }
                 <FormMessage />
               </FormItem>
@@ -563,10 +564,10 @@ export const generateCodeSnippet = (field: FormFieldType) => {
       return `
           <FormField
             control={form.control}
-            name="${field.name}"
+            name="${field.technical.id}"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>${field.label}</FormLabel>
+                <FormLabel>${field.ui.label}</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -589,8 +590,8 @@ export const generateCodeSnippet = (field: FormFieldType) => {
                   </RadioGroup>
                 </FormControl>
                 ${
-                  field.description &&
-                  `<FormDescription>${field.description}</FormDescription>`
+                  field.ui.hint &&
+                  `<FormDescription>${field.ui.hint}</FormDescription>`
                 }
                 <FormMessage />
               </FormItem>

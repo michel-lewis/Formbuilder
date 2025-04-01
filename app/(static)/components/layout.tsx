@@ -48,10 +48,9 @@ export default function ComponentsLayout({
   return (
     <div className="max-w-5xl mx-auto min-h-[calc(100vh-250.5px)]">
       <div className="space-y-4">
-        <h1 className="text-2xl font-semibold">Components</h1>
+        <h1 className="text-2xl font-semibold">Traduction Page </h1>
         <p className="text-sm text-muted-foreground">
-          Unofficial shadcn components that you asked for and we could not find
-          better so far.
+          This is the traduction page.
         </p>
         <div>{children}</div>
       </div>

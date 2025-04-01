@@ -5,14 +5,15 @@ import { FieldItem } from '@/screens/field-item'
 
 import { LuRows2 } from 'react-icons/lu'
 import { Badge } from '@/components/ui/badge'
+import { FormFieldCustomType } from '@/constants/interfarce'
 
-export type FormFieldOrGroup = FormFieldType | FormFieldType[]
+export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
 type FormFieldListProps = {
   formFields: FormFieldOrGroup[]
   setFormFields: React.Dispatch<React.SetStateAction<FormFieldOrGroup[]>>
-  updateFormField: (path: number[], updates: Partial<FormFieldType>) => void
-  openEditDialog: (field: FormFieldType) => void
+  updateFormField: (path: number[], updates: Partial<FormFieldCustomType>) => void
+  openEditDialog: (field: FormFieldCustomType) => void
 }
 
 export const FormFieldList: React.FC<FormFieldListProps> = ({
@@ -21,10 +22,10 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
   updateFormField,
   openEditDialog,
 }) => {
-  const [rowTabs, setRowTabs] = useState<{ [key: number]: FormFieldType[] }>({})
+  const [rowTabs, setRowTabs] = useState<{ [key: number]: FormFieldCustomType[] }>({})
 
   const handleHorizontalReorder = useCallback(
-    (index: number, newOrder: FormFieldType[]) => {
+    (index: number, newOrder: FormFieldCustomType[]) => {
       setRowTabs((prev) => ({ ...prev, [index]: newOrder }))
 
       // Delay setFormFields by 1 second
@@ -51,8 +52,8 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
           <Reorder.Item
             key={
               Array.isArray(item)
-                ? item.map((f) => f.name).join('-')
-                : item.name
+                ? item.map((f) => f.ui.label).join('-')
+                : item.ui.label
             }
             value={item}
             className="flex items-center gap-1"
@@ -72,7 +73,7 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
                 <AnimatePresence initial={false}>
                   {(rowTabs[index] || item).map((field, fieldIndex) => (
                     <FieldItem
-                      key={field.name}
+                      key={field.ui.label}
                       index={index}
                       subIndex={fieldIndex}
                       field={field}

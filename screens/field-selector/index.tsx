@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button'
 import If from '@/components/ui/if'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
+import { FormFieldCustomType } from '@/constants/interfarce'
 
 type FieldSelectorProps = {
-  addFormField: (variant: string, index?: number) => void
+  addFormField: (variant: string, index?: number, type?: FormFieldCustomType ) => void
 }
 
 export const FieldSelector: React.FC<FieldSelectorProps> = ({
@@ -20,9 +21,10 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
           <Button
             key={variant.name}
             variant="outline"
-            onClick={() => addFormField(variant.name, variant.index)}
+            onClick={() => addFormField(variant.name, variant.index, variant.type)}
             className="rounded-full"
             size="sm"
+
           >
             {variant.name}
             <If

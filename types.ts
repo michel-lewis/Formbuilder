@@ -1,5 +1,5 @@
 import * as Locales from 'date-fns/locale'
-
+import * as interfaces from './constants/interfarce'
 // Define the FormField type
 export type FormFieldType = {
   type: string
@@ -26,9 +26,12 @@ export type FormFieldType = {
   locale?: keyof typeof Locales
   hour12?: boolean
   className?: string
+  français?: string
+  anglais?: string
+  customType?: interfaces.FormField 
 }
 
-export type FieldType = { name: string; isNew: boolean; index?: number }
+export type FieldType = { name: string; isNew: boolean; index?: number, type: interfaces.FormField}
 
 export interface EditorColumn {
   id: string

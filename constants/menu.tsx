@@ -39,7 +39,7 @@ export const componentCommands: CommandItem[] = [
   { title: 'Input OTP', value: 'input-otp', icon: <span>I</span> },
   {
     title: 'Location Input',
-    value: 'location-input',
+    value: '',
     icon: <span>L</span>,
     isNew: true,
   },

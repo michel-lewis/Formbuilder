@@ -7,6 +7,7 @@ import HowItWorks from '@/components/sections/how-it-works'
 import FAQ from '@/components/sections/faq'
 import Testimonials from '@/components/sections/testimonials'
 import { Footer } from '@/components/footer'
+import { LanguageProvider } from '@/constants/languageContext'
 
 export default function Home() {
   return (

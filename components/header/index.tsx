@@ -20,6 +20,7 @@ import { SiBuymeacoffee } from 'react-icons/si'
 import Logo from '@/assets/logo.svg'
 import { usePathname } from 'next/navigation'
 import { ThemeSwitch } from '../ui/theme-switch'
+import LanguageSwitch from '../ui/language-switch'
 
 type Tabs = {
   name: string
@@ -49,7 +50,7 @@ const tabs: Tabs[] = [
     variant: 'arrow',
     isNewTab: true,
   },
-  { name: 'Components', href: '/components', variant: 'linkHover2' },
+  { name: 'Text', href: '/components', variant: 'ghost' },
   { name: 'Templates', href: '/templates', variant: 'linkHover2' },
 ]
 
@@ -106,7 +107,7 @@ export default function Header() {
             Playground
           </Button>
         </Link>
-        <Link
+        {/* <Link
           href="https://github.com/hasanharman/form-builder"
           target="_blank"
         >
@@ -118,12 +119,13 @@ export default function Header() {
           <Button variant="outline" className="rounded-full p-2">
             <FaXTwitter className="text-lg" />
           </Button>
-        </Link>
-        <Link href="https://buymeacoffee.com/hasanharman" target="_blank">
+        </Link> */}
+        {/* <Link href="https://buymeacoffee.com/hasanharman" target="_blank">
         <Button className="bg-yellow-400 text-black hover:text-white hover:dark:text-black  rounded-full p-2">
         <SiBuymeacoffee className="text-lg" />
           </Button>
-        </Link>
+        </Link> */}
+        <LanguageSwitch />
         <ThemeSwitch />
       </div>
 

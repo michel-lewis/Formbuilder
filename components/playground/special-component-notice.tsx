@@ -2,8 +2,9 @@ import { Link } from 'next-view-transitions'
 
 import { SPECIAL_COMPONENTS } from '@/constants/special-components'
 import { FormFieldType } from '@/types'
+import { FormFieldCustomType } from '@/constants/interfarce'
 
-export type FormFieldOrGroup = FormFieldType | FormFieldType[]
+export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
 const SpecialComponentsNotice = ({
   formFields,
@@ -12,7 +13,7 @@ const SpecialComponentsNotice = ({
 }) => {
   const usedSpecialComponents = SPECIAL_COMPONENTS.filter((component) =>
     formFields.some(
-      (field) => !Array.isArray(field) && field.variant === component.variant,
+      (field) => !Array.isArray(field) && field.technical.inputType === component.variant,
     ),
   )
 
