@@ -95,3 +95,4 @@ export interface FormFieldCustomType{
 
 export type ValidationRules = ValidationProps;
 export type FormFieldProps = FormFieldCustomType;
+export type FormField = FormFieldCustomType
