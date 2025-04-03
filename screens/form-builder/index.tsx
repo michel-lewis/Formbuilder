@@ -17,7 +17,6 @@ import { EditFieldDialog } from '@/screens/edit-field-dialog'
 import EmptyListSvg from '@/assets/oc-thinking.svg'
 import Editor from '@/components/editor/editor'
 import { FormFieldCustomType } from '@/constants/interfarce'
-import {formFieldsInstances} from '@/constants/interfaces-instances';
 import { initializeFormField } from '@/constants/global-utils'
 
 export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]

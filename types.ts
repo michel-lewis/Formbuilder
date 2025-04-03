@@ -2,7 +2,6 @@ import * as Locales from 'date-fns/locale'
 import * as interfaces from './constants/interfarce'
 // Define the FormField type
 export type FormFieldType = {
-  type: string
   variant: string
   name: string
   label: string
@@ -31,7 +30,7 @@ export type FormFieldType = {
   customType?: interfaces.FormField 
 }
 
-export type FieldType = { name: string; isNew: boolean; index?: number, type: interfaces.FormField}
+export type FieldType = { name: string; isNew: boolean; index?: number}
 
 export interface EditorColumn {
   id: string

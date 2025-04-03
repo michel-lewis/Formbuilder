@@ -1,27 +1,26 @@
 import { FieldType } from '@/types'
-import { formFieldsInstances } from './interfaces-instances';
 import { FormFieldCustomType } from './interfarce';
 export const fieldTypes: FieldType[] = [
-  { name: 'Checkbox', isNew: false , type: formFieldsInstances.checkboxField },
-  { name: 'Combobox', isNew: false, type: formFieldsInstances.combobox  },
-  { name: 'Date Picker', isNew: false, type: formFieldsInstances.datePicker  },
-  { name: 'Datetime Picker', isNew: true,  type: formFieldsInstances.datetimePicker },
-  { name: 'File Input', isNew: false, type: formFieldsInstances.fileInput },
-  { name: 'Input', isNew: false, type: formFieldsInstances.input },
-  { name: 'Input OTP', isNew: false, type: formFieldsInstances.inputOtp },
-  { name: 'Location Input', isNew: true, type: formFieldsInstances.datePicker },
-  { name: 'Multi Select', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Password', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Phone', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Select', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Signature Input', isNew: true, type: formFieldsInstances.datePicker },
-  { name: 'Slider', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Smart Datetime Input', isNew: true, type: formFieldsInstances.datePicker },
-  { name: 'Switch', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Tags Input', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Textarea', isNew: false, type: formFieldsInstances.datePicker },
-  { name: 'Rating', isNew: true, type: formFieldsInstances.datePicker },
-  { name: 'RadioGroup', isNew: true, type: formFieldsInstances.datePicker },
+  { name: 'Checkbox', isNew: false },
+  { name: 'Combobox', isNew: false },
+  { name: 'Date Picker', isNew: false},
+  { name: 'Datetime Picker', isNew: true},
+  { name: 'File Input', isNew: false},
+  { name: 'Input', isNew: false},
+  { name: 'Input OTP', isNew: false},
+  { name: 'Location Input', isNew: true},
+  { name: 'Multi Select', isNew: false},
+  { name: 'Password', isNew: false },
+  { name: 'Phone', isNew: false},
+  { name: 'Select', isNew: false},
+  { name: 'Signature Input', isNew: true},
+  { name: 'Slider', isNew: false},
+  { name: 'Smart Datetime Input', isNew: true},
+  { name: 'Switch', isNew: false},
+  { name: 'Tags Input', isNew: false},
+  { name: 'Textarea', isNew: false},
+  { name: 'Rating', isNew: true},
+  { name: 'RadioGroup', isNew: true},
 ]
 
 export const defaultFieldConfig: Record<
@@ -32,7 +31,6 @@ export const defaultFieldConfig: Record<
     label: 'Use different settings for my mobile devices',
     description:
       'You can manage your mobile notifications in the mobile settings page.',
-    customType: formFieldsInstances.checkboxField,
   },
   Combobox: {
     label: 'Language',

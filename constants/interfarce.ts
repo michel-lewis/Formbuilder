@@ -31,11 +31,19 @@ interface UIProps {
 
 }
 
+interface TransalateType {
+    key: string;
+    english: string;
+    french: string;
+}
+
 interface CMSProps {
     translatable: boolean;
     translationKey?: string;
     seoFriendly?: boolean;
     activeLocales?: string[];
+    english?: string;
+    french?: string;
 }
 
 interface ValidationProps {

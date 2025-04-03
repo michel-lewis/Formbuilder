@@ -26,7 +26,7 @@ import { Translation, Translations } from '@/constants/global-utils'
 import { FormFieldCustomType } from "@/constants/interfarce"
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import {  LuCheck, LuSettings, LuLayoutDashboard, LuCode, LuTable, LuEye, LuBug, LuCpu  } from 'react-icons/lu'
+import { LuCheck, LuSettings, LuLayoutDashboard, LuCode, LuTable, LuEye, LuBug, LuCpu, LuBook } from 'react-icons/lu'
 import { Bold } from 'lucide-react'
 
 
@@ -59,14 +59,15 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
   const [activeMenu, setActiveMenu] = useState<string>('general')
 
   const menuItems: MenuItem[] = [
-    { id: 'validations', label: 'Validations Rules', icons: <LuCheck size={14} fontSize={14} />  },
-    { id: 'general', label: 'Général Props', icons: <LuSettings />   },
-    { id: 'ui', label: 'UI', icons: <LuLayoutDashboard />   },
-    { id: 'logic', label: 'Logic', icons: <LuCode />    },
-    { id: 'data', label: 'Data Layout', icons: <LuTable />    },
-    { id: 'accessibility', label: 'Accessibility', icons: <LuEye />   },
-    { id: 'devonly', label: 'Dev Only', icons: <LuBug />   },
-    { id: 'technical', label: 'Technical', icons: <LuCpu />  },
+    { id: 'validations', label: 'Validations Rules', icons: <LuCheck size={14} fontSize={14} /> },
+    { id: 'general', label: 'Général Props', icons: <LuSettings /> },
+    { id: 'ui', label: 'UI', icons: <LuLayoutDashboard /> },
+    { id: 'logic', label: 'Logic', icons: <LuCode /> },
+    { id: 'data', label: 'Data Layout', icons: <LuTable /> },
+    { id: 'accessibility', label: 'Accessibility', icons: <LuEye /> },
+    { id: 'devonly', label: 'Dev Only', icons: <LuBug /> },
+    { id: 'technical', label: 'Technical', icons: <LuCpu /> },
+    { id: 'translation', label: 'Translation', icons: <LuBook /> },
   ]
 
   const getTranslations = () => {
@@ -248,7 +249,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
                   value={editedField?.ui.placeholder?.toString() || ""}
                   onChange={(e) =>
                     setEditedField({
-                      ...editedField, 
+                      ...editedField,
                       ui: {
                         ...editedField.ui,
                         placeholder: e.target.value
@@ -263,12 +264,12 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
                 <Input
                   value={editedField?.ui.className?.toString() || ""}
                   onChange={(e) =>
-                    setEditedField({ 
-                      ...editedField, 
+                    setEditedField({
+                      ...editedField,
                       ui: {
                         ...editedField.ui,
                         className: e.target.value
-                      } 
+                      }
                     })
                   }
                 />
@@ -446,7 +447,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
                       ...editedField,
                       data: {
                         ...editedField.data,
-                        sourceType: value as 'static' | 'api' | 'database' 
+                        sourceType: value as 'static' | 'api' | 'database'
                       }
                     })
                   }
@@ -462,7 +463,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
                 </Select>
               </div>
 
-                {/* <div className="space-y-2">
+              {/* <div className="space-y-2">
                   <Label>Api Endpoints</Label>
                   <Input
                     value={editedField.data?.apiEndpoint || ''}
@@ -491,7 +492,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
                       }
                     })
                   } */}
-                  {/* placeholder="e.g. YYYY-MM-DD for dates"
+                {/* placeholder="e.g. YYYY-MM-DD for dates"
                 /> */}
               </div>
             </div>
@@ -708,6 +709,60 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
             </div>
           </div>
         )
+      case 'translation':
+        return (
+          <div className="py-4 space-y-4">
+            <h3 className="text-lg font-semibold">Transalation </h3>
+            <div className="space-y-4">
+            <div className="space-y-2">
+                <Label>Id</Label>
+                <Input
+                  value={editedField?.cms.translationKey?.toString() || ""}
+                  onChange={(e) =>
+                    setEditedField({
+                      ...editedField,
+                      ui: {
+                        ...editedField.ui,
+                        hint: e.target.value
+                      }
+                    })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>French version </Label>
+                <Input
+                  value={editedField.cms.french?.toString() || ""}
+                  onChange={(e) =>
+                    setEditedField({
+                      ...editedField,
+                      ui: {
+                        ...editedField.ui,
+                        label: e.target.value
+                      }
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>English version </Label>
+                <Input
+                  value={editedField.cms.english?.toString() || ""}
+                  onChange={(e) =>
+                    setEditedField({
+                      ...editedField,
+                      ui: {
+                        ...editedField.ui,
+                        label: e.target.value
+                      }
+                    })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        )
 
       default:
         return (
@@ -733,11 +788,11 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
                 onClick={() => setActiveMenu(item.id)}
               >
                 {item.icons && (
-              <span className="w-5 h-5 flex items-center justify-center">
-                {item.icons}
-              </span>
-            )}
-            <span>{item.label}</span>
+                  <span className="w-5 h-5 flex items-center justify-center">
+                    {item.icons}
+                  </span>
+                )}
+                <span>{item.label}</span>
               </Button>
             ))}
           </div>
@@ -750,9 +805,9 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
               {translations[language].find(t => t.id === 'edit_field')?.value || 'Edit Field'} {editedField.technical.fieldType} Field
             </DialogTitle>
           </DialogHeader>
-          
+
           {renderContent()}
-          
+
           <DialogFooter className="sticky bottom-0 bg-background pt-4 border-t">
             <Button onClick={handleSave}>
               {translations[language].find(t => t.id === 'Save changes')?.value || 'Save changes'}

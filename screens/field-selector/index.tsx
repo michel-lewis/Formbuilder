@@ -21,7 +21,7 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
           <Button
             key={variant.name}
             variant="outline"
-            onClick={() => addFormField(variant.name, variant.index, variant.type)}
+            onClick={() => addFormField(variant.name, variant.index)}
             className="rounded-full"
             size="sm"
 

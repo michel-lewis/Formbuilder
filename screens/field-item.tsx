@@ -17,7 +17,6 @@ import If from '@/components/ui/if'
 
 import { LuColumns2, LuPencil, LuTrash2,  } from 'react-icons/lu'
 import { FormFieldCustomType } from '@/constants/interfarce'
-import { formFieldsInstances } from '@/constants/interfaces-instances'
 import { initializeFormField } from '@/constants/global-utils'
 
 export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
@@ -71,7 +70,6 @@ export const FieldItem = ({
     }
 
     const newField: FormFieldCustomType | undefined = initializeFormField(variant) as FormFieldCustomType
-
 
     setFormFields((prevFields) => {
       const newFields = [...prevFields]
