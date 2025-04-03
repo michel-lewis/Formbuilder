@@ -136,7 +136,7 @@ export const renderFormField = (field: FormFieldCustomType, form: any) => {
     multiple: true,
   }
 
-  switch (field.technical.id) {
+  switch (field.technical.fieldType) {
     case 'Checkbox':
       return (
         <FormItem className="flex flex-col">

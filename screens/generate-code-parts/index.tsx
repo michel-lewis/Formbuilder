@@ -203,7 +203,7 @@ export const generateImports = (
   ])
 
   const processField = (field: FormFieldCustomType) => {
-    switch (field.technical.id) {
+    switch (field.technical.fieldType) {
       case 'Combobox':
         importSet.add(
           'import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command"',
@@ -280,7 +280,7 @@ export const generateImports = (
         break
       default:
         importSet.add(
-          `import { ${field.technical.id} } from "@/components/ui/${field.technical.id.toLowerCase()}"`,
+          `import { ${field.technical.fieldType} } from "@/components/ui/${field.technical.fieldType.toLowerCase()}"`,
         )
         break
     }
@@ -297,7 +297,7 @@ export const generateConstants = (
   const constantSet: Set<string> = new Set()
 
   formFields.flat().forEach((field) => {
-    if (field.technical.id === 'Combobox') {
+    if (field.technical.fieldType === 'Combobox') {
       constantSet.add(`const languages = [
         { label: "English", value: "en" },
         { label: "French", value: "fr" },
@@ -309,7 +309,7 @@ export const generateConstants = (
         { label: "Korean", value: "ko" },
         { label: "Chinese", value: "zh" },
       ] as const;`)
-    } else if (field.technical.id === 'File Input') {
+    } else if (field.technical.fieldType === 'File Input') {
       constantSet.add(`
         const [files, setFiles] = useState<File[] | null>(null); 
 
@@ -318,12 +318,12 @@ export const generateConstants = (
           maxSize: 1024 * 1024 * 4,
           multiple: true,
         };`)
-    } else if (field.technical.id === 'Location Input') {
+    } else if (field.technical.fieldType === 'Location Input') {
       constantSet.add(`
         const [countryName, setCountryName] = useState<string>('')
         const [stateName, setStateName] = useState<string>('')
         `)
-    } else if (field.technical.id === 'Signature Input') {
+    } else if (field.technical.fieldType === 'Signature Input') {
       constantSet.add(`const canvasRef = useRef<HTMLCanvasElement>(null)`)
     }
   })
@@ -340,29 +340,29 @@ export const generateDefaultValues = (
 
   fields.flat().forEach((field) => {
     // Skip if field already has a default value
-    if (defaultValues[field.technical.id]) return
+    if (defaultValues[field.technical.fieldType]) return
 
     // Handle field variants
-    switch (field.technical.id) {
+    switch (field.technical.fieldType) {
       case 'Checkbox':
       case 'Switch':
-        defaultValues[field.technical.id] = true
+        defaultValues[field.technical.fieldType] = true
         break
       case 'Multi Select':
-        defaultValues[field.technical.id] = ['React']
+        defaultValues[field.technical.fieldType] = ['React']
         break
       case 'Tags Input':
-        defaultValues[field.technical.id] = []
+        defaultValues[field.technical.fieldType] = []
         break
       case 'Datetime Picker':
       case 'Date Picker':
-        defaultValues[field.technical.id] = new Date()
+        defaultValues[field.technical.fieldType] = new Date()
         break
       case 'Rating':
-        defaultValues[field.technical.id] = '0'
+        defaultValues[field.technical.fieldType] = '0'
         break
       case 'Slider':
-        defaultValues[field.technical.id] = 5
+        defaultValues[field.technical.fieldType] = 5
         break
     }
   })
@@ -377,14 +377,14 @@ export const generateDefaultValuesString = (
   const dateFields: string[] = []
 
   fields.flat().forEach((field) => {
-    if (field.technical.id === 'Multi Select') {
+    if (field.technical.fieldType === 'Multi Select') {
       defaultValues[field.ui.label] = ['React']
-    } else if (field.technical.id === 'Tags Input') {
+    } else if (field.technical.fieldType === 'Tags Input') {
       defaultValues[field.ui.label] = ['test']
     } else if (
-      field.technical.id === 'Datetime Picker' ||
-      field.technical.id === 'Smart Datetime Input' ||
-      field.technical.id === 'Date Picker'
+      field.technical.fieldType === 'Datetime Picker' ||
+      field.technical.fieldType === 'Smart Datetime Input' ||
+      field.technical.fieldType === 'Date Picker'
     ) {
       dateFields.push(field.ui.label)
       delete defaultValues[field.ui.label]

@@ -18,6 +18,7 @@ import If from '@/components/ui/if'
 import { LuColumns2, LuPencil, LuTrash2,  } from 'react-icons/lu'
 import { FormFieldCustomType } from '@/constants/interfarce'
 import { formFieldsInstances } from '@/constants/interfaces-instances'
+import { initializeFormField } from '@/constants/global-utils'
 
 export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
@@ -69,9 +70,8 @@ export const FieldItem = ({
       placeholder: '',
     }
 
-  const newField: FormFieldCustomType | undefined = Object.values(formFieldsInstances).find(
-      (field) => field.technical.id === variant
-  ) || formFieldsInstances.input;
+    const newField: FormFieldCustomType | undefined = initializeFormField(variant) as FormFieldCustomType
+
 
     setFormFields((prevFields) => {
       const newFields = [...prevFields]
@@ -163,7 +163,7 @@ export const FieldItem = ({
             render={() => <LuColumns2 className="cursor-grab w-4 h-4" />}
           />
           <div className="flex items-center w-full">
-            <div className="w-full text-sm">{field.technical.id}</div>
+            <div className="w-full text-sm">{field.technical.fieldType}</div>
             <Button
               variant="ghost"
               size="icon"

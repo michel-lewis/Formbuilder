@@ -75,7 +75,6 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
   };
 
   useEffect(() => {
-    console.log("edited fields variant", editedField)
     getTranslations();
     const handleLanguageChange = () => {
       const newLang = localStorage.getItem("language") as Language || "fr";
@@ -98,7 +97,6 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
   }, [language]);
 
   useEffect(() => {
-    console.log('Updated language:', field);
     setEditedField(field)
   }, [field])
 
@@ -116,7 +114,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
       case 'validations':
         return (
           <div className="py-4 space-y-4">
-            <h3 className="text-lg font-semibold">{editedField.technical.id} Validation rules</h3>
+            <h3 className="text-lg font-semibold">{editedField.technical.fieldType} Validation rules</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 p-3 rounded border">
@@ -210,7 +208,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
       case 'general':
         return (
           <div className="py-4 space-y-4">
-            <h3 className="text-lg font-semibold">Général {editedField.technical.id} Field properties</h3>
+            <h3 className="text-lg font-semibold">Général {editedField.technical.fieldType} Field properties</h3>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>{translations[language].find(t => t.id === 'label')?.value || 'Label'}</Label>
@@ -566,7 +564,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
               <div className="space-y-2">
                 <Label>Field ID</Label>
                 <Input
-                  value={editedField.technical.id || ''}
+                  value={editedField.technical.fieldType || ''}
                   onChange={(e) =>
                     setEditedField({
                       ...editedField,
@@ -621,7 +619,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
           <div className="py-4 space-y-4">
             <h3 className="text-lg font-semibold">Technical Settings</h3>
             <div className="space-y-4">
-              <If condition={field?.technical.id === 'Input'}>
+              <If condition={field?.technical.fieldType === 'Input'}>
                 <div className="space-y-2">
                   <Label>Input Type</Label>
                   <Select
@@ -749,7 +747,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
         <div className="flex-1 pl-4 overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {translations[language].find(t => t.id === 'edit_field')?.value || 'Edit Field'} {editedField.technical.id} Field
+              {translations[language].find(t => t.id === 'edit_field')?.value || 'Edit Field'} {editedField.technical.fieldType} Field
             </DialogTitle>
           </DialogHeader>
           

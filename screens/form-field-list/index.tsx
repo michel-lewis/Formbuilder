@@ -39,7 +39,7 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
     },
     [setFormFields],
   )
-
+console.log("formfields form fields", formFields)
   return (
     <div className="mt-3 lg:mt-0">
       <Reorder.Group
@@ -73,7 +73,7 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
                 <AnimatePresence initial={false}>
                   {(rowTabs[index] || item).map((field, fieldIndex) => (
                     <FieldItem
-                      key={field.ui.label}
+                      key={field.technical.id}
                       index={index}
                       subIndex={fieldIndex}
                       field={field}

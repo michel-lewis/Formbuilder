@@ -2,7 +2,7 @@ import { FormFieldCustomType } from '@/constants/interfarce'
 import { FormFieldType } from '@/types'
 
 export const generateCodeSnippet = (field: FormFieldCustomType) => {
-  switch (field.technical.id) {
+  switch (field.technical.fieldType) {
     case 'Checkbox':
       return `<FormField
           control={form.control}
@@ -17,7 +17,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>${field.technical.id}</FormLabel>
+                <FormLabel>${field.technical.fieldType}</FormLabel>
                 ${
                   field.ui.hint &&
                   `<FormDescription>${field.ui.hint}</FormDescription>`
@@ -30,7 +30,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
     case 'Combobox':
       return `<FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>${field.ui.label}</FormLabel>
@@ -97,7 +97,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
       <FormField
       control={form.control}
-      name="${field.technical.id}"
+      name="${field.technical.fieldType}"
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel>${field.ui.label}</FormLabel>
@@ -141,7 +141,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
       <FormField
       control={form.control}
-      name="${field.technical.id}"
+      name="${field.technical.fieldType}"
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel>${field.ui.label}</FormLabel>
@@ -164,7 +164,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
             <FormItem>
               <FormLabel>${field.ui.label}</FormLabel>
@@ -187,7 +187,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
        <FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
             <FormItem>
               <FormLabel>${field.ui.label}</FormLabel>
@@ -218,7 +218,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
            <FormField
               control={form.control}
-              name="${field.technical.id}"
+              name="${field.technical.fieldType}"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>${field.ui.label}</FormLabel>
@@ -226,11 +226,11 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
                   <LocationSelector
                     onCountryChange={(country) => {
                       setCountryName(country?.name || '')
-                      form.setValue(field.technical.id, [country?.name || '', stateName || ''])
+                      form.setValue(field.technical.fieldType, [country?.name || '', stateName || ''])
                     }}
                     onStateChange={(state) => {
                       setStateName(state?.name || '')
-                      form.setValue(field.technical.id, [form.getValues(field.technical.id)[0] || '', state?.name || ''])
+                      form.setValue(field.technical.fieldType, [form.getValues(field.technical.fieldType)[0] || '', state?.name || ''])
                     }}
                   />
                   </FormControl>
@@ -246,7 +246,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
            <FormField
               control={form.control}
-              name="${field.technical.id}"
+              name="${field.technical.fieldType}"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>${field.ui.label}</FormLabel>
@@ -281,7 +281,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
             <FormItem>
               <FormLabel>${field.ui.label}</FormLabel>
@@ -309,7 +309,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
             <FormField
               control={form.control}
-              name="${field.technical.id}"
+              name="${field.technical.fieldType}"
               render={({ field: { value, onChange } }) => (
               <FormItem>
                 <FormLabel>Price - {value}</FormLabel>
@@ -335,7 +335,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
     case 'Signature Input':
       return `<FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
           <FormItem>
             <FormLabel>${field.ui.label}</FormLabel>
@@ -357,7 +357,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
             <FormField
               control={form.control}
-              name="${field.technical.id}"
+              name="${field.technical.fieldType}"
               render={({ field }) => (
               <FormItem>
                 <FormLabel>${field.ui.label}</FormLabel>
@@ -382,7 +382,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
           <FormField
               control={form.control}
-              name="${field.technical.id}"
+              name="${field.technical.fieldType}"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
@@ -407,7 +407,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
             <FormItem>
               <FormLabel>${field.ui.label}</FormLabel>
@@ -430,7 +430,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
             <FormItem>
               <FormLabel>${field.ui.label}</FormLabel>
@@ -453,7 +453,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
             <FormField
               control={form.control}
-              name="${field.technical.id}"
+              name="${field.technical.fieldType}"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>${field.ui.label}</FormLabel>
@@ -500,7 +500,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
         <FormField
           control={form.control}
-          name="${field.technical.id}"
+          name="${field.technical.fieldType}"
           render={({ field }) => (
             <FormItem>
               <FormLabel>${field.ui.label}</FormLabel>
@@ -520,7 +520,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
           <FormField
             control={form.control}
-            name="${field.technical.id}"
+            name="${field.technical.fieldType}"
             render={({ field }) => (
               <FormItem className="flex flex-col items-start">
               <FormLabel>${field.ui.label}</FormLabel>
@@ -544,7 +544,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
           <FormField
             control={form.control}
-            name="${field.technical.id}"
+            name="${field.technical.fieldType}"
             render={({ field }) => (
               <FormItem className="flex flex-col items-start">
               <FormLabel>${field.ui.label}</FormLabel>
@@ -564,7 +564,7 @@ export const generateCodeSnippet = (field: FormFieldCustomType) => {
       return `
           <FormField
             control={form.control}
-            name="${field.technical.id}"
+            name="${field.technical.fieldType}"
             render={({ field }) => (
               <FormItem className="space-y-3">
                 <FormLabel>${field.ui.label}</FormLabel>

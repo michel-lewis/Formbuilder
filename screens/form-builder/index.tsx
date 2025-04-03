@@ -18,6 +18,7 @@ import EmptyListSvg from '@/assets/oc-thinking.svg'
 import Editor from '@/components/editor/editor'
 import { FormFieldCustomType } from '@/constants/interfarce'
 import {formFieldsInstances} from '@/constants/interfaces-instances';
+import { initializeFormField } from '@/constants/global-utils'
 
 export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
@@ -29,7 +30,6 @@ export default function FormBuilder() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const addFormField = (variant: string, index: number, type?: FormFieldCustomType) => {
-    console.log("add form fields variant type next ", type)
     const newFieldName = `name_${Math.random().toString().slice(-10)}`
 
     const { label, description, placeholder, customType } = defaultFieldConfig[variant] || {
@@ -38,11 +38,9 @@ export default function FormBuilder() {
       placeholder: '',
     }
 
-    const newField: FormFieldCustomType | undefined =formFieldsInstances[variant] || formFieldsInstances.input;
+    const newField: FormFieldCustomType | undefined = initializeFormField(variant) as FormFieldCustomType
 
-  console.log('new field ', Object.values(formFieldsInstances).find(
-    (field) => field.technical.inputType === variant
-), variant)
+  console.log('new field ', newField)
 
     setFormFields([...formFields, newField])
   }
@@ -94,6 +92,7 @@ export default function FormBuilder() {
         updateFormField(path, updatedField)
       }
     }
+    localStorage.setItem('updatedField', JSON.stringify(updatedField));
     setIsDialogOpen(false)
   }
 
@@ -107,7 +106,7 @@ export default function FormBuilder() {
       <Separator orientation={isDesktop ? 'vertical' : 'horizontal'} />
     </div>
   )
-
+  console.log('form builder formfields', formFields)
   return (
     <section className="md:max-h-screen space-y-8">
       <div className="max-w-5xl mx-auto space-y-4">

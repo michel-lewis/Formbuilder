@@ -68,7 +68,7 @@ const renderFormFields = (fields: FormFieldOrGroup[], form: any) => {
         </div>
       )
     } else {
-      console.log("renderFormField output:", renderFormField(fieldOrGroup, form))      
+      console.log("renderFormField output:", fieldOrGroup)      
       return (
         <FormField
           key={index}
@@ -117,14 +117,13 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
 
   const generatedCode = generateFormCode(formFields)
   const formattedCode = formatJSXCode(generatedCode)
-
+  console.log("formfields ", formFields)
   return (
     <div className="w-full h-full col-span-1 rounded-xl flex justify-center">
       <Tabs defaultValue="preview" className="w-full">
         <TabsList className="flex justify-center w-fit mx-auto">
           <TabsTrigger value="preview">Preview</TabsTrigger>
           <TabsTrigger value="json">JSON</TabsTrigger>
-          <TabsTrigger value="code">Code</TabsTrigger>
         </TabsList>
         <TabsContent
           value="preview"
