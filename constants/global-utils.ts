@@ -44,7 +44,7 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
   // Valeurs par défaut communes à tous les champs
   const baseField: Partial<FormFieldCustomType> = {
     technical: {
-      id: `field-${Date.now()}`,
+      id: `${fieldType}-${Date.now()}`,
       key: '',
       fieldType: fieldType,
     },

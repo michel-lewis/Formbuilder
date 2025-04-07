@@ -1,8 +1,12 @@
+// First, update your FormBuilder.tsx to include the DnD provider
+
 'use client'
 
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { Link } from 'next-view-transitions'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { FormFieldType } from '@/types'
 import { defaultFieldConfig } from '@/constants'
@@ -18,6 +22,7 @@ import EmptyListSvg from '@/assets/oc-thinking.svg'
 import Editor from '@/components/editor/editor'
 import { FormFieldCustomType } from '@/constants/interfarce'
 import { initializeFormField } from '@/constants/global-utils'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
@@ -27,21 +32,17 @@ export default function FormBuilder() {
   const [formFields, setFormFields] = useState<FormFieldOrGroup[]>([])
   const [selectedField, setSelectedField] = useState<FormFieldCustomType | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [viewMode, setViewMode] = useState<'builder' | 'preview'>('builder')
 
-  const addFormField = (variant: string, index: number, type?: FormFieldCustomType) => {
-    const newFieldName = `name_${Math.random().toString().slice(-10)}`
-
-    const { label, description, placeholder, customType } = defaultFieldConfig[variant] || {
-      label: '',
-      description: '',
-      placeholder: '',
-    }
-
+  const addFormField = (variant: string, index: number = formFields.length, type?: FormFieldCustomType) => {
     const newField: FormFieldCustomType | undefined = initializeFormField(variant) as FormFieldCustomType
-
-  console.log('new field ', newField)
-
-    setFormFields([...formFields, newField])
+    
+    if (newField) {
+      // Create a new array and insert the field at the specified index
+      const newFields = [...formFields];
+      newFields.splice(index, 0, newField);
+      setFormFields(newFields);
+    }
   }
 
   const findFieldPath = (
@@ -105,68 +106,145 @@ export default function FormBuilder() {
       <Separator orientation={isDesktop ? 'vertical' : 'horizontal'} />
     </div>
   )
-  console.log('form builder formfields', formFields)
+  
   return (
-    <section className="md:max-h-screen space-y-8">
-      <div className="max-w-5xl mx-auto space-y-4">
-        <h1 className="text-2xl font-semibold">Playground</h1>
-        <p className="text-sm text-muted-foreground">
-          After successfully installing Shadcn, you can simply copy and paste
-          the generated form components to get started. Some components may have
-          additional dependencies, so make sure to review their documentation in
-          the{' '}
-          <Link href="/readme" className="underline text-slate-800  dark:text-white dark:font-semibold">
-            README
-          </Link>{' '}
-          for further instructions.
-        </p>
-        {/* <Editor /> */}
-      </div>
-      <If
-        condition={formFields.length > 0}
-        render={() => (
-          <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-8 md:px-5 h-full">
-            <div className="w-full h-full col-span-1 md:space-x-3 md:max-h-[75vh] flex flex-col md:flex-row ">
-              <FieldSelectorWithSeparator
-                addFormField={(variant: string, index: number = 0, type?: FormFieldCustomType) =>
-                  addFormField(variant, index, type)
-                }
+    <DndProvider backend={HTML5Backend}>
+      <section className="md:max-h-screen space-y-8">
+        <div className="max-w-5xl mx-auto space-y-4">
+          <h1 className="text-2xl font-semibold">Playground</h1>
+          
+          <div className="flex justify-center mb-6">
+            <div 
+              role="tablist" 
+              aria-label="View mode selector"
+              className="relative inline-flex items-center bg-gray-100 dark:bg-gray-800 rounded-full p-1 w-48 shadow-inner"
+            >
+              <motion.div
+                layout
+                className={`absolute w-1/2 h-[calc(100%-0.5rem)] rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-md ${
+                  viewMode === 'builder' ? 'left-1' : 'left-[calc(50%-0.125rem)]'
+                }`}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
-              <div className="overflow-y-auto flex-1 ">
-                <FormFieldList
-                  formFields={formFields}
-                  setFormFields={setFormFields}
-                  updateFormField={updateFormField}
-                  openEditDialog={openEditDialog}
-                />
-              </div>
+              
+              <button
+                role="tab"
+                aria-selected={viewMode === 'builder'}
+                aria-controls="builder-panel"
+                id="builder-tab"
+                className={`relative z-10 w-1/2 text-sm font-medium py-1.5 transition-colors rounded-full ${
+                  viewMode === 'builder' 
+                    ? 'text-white' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
+                }`}
+                onClick={() => setViewMode('builder')}
+              >
+                <span className="flex items-center justify-center gap-1">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="16" 
+                    height="16" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    className="hidden sm:inline-block"
+                  >
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <path d="M3.27 6.96 12 12.01l8.73-5.05" />
+                    <path d="M12 22.08V12" />
+                  </svg>
+                  Builder
+                </span>
+              </button>
+              
+              <button
+                role="tab"
+                aria-selected={viewMode === 'preview'}
+                aria-controls="preview-panel"
+                id="preview-tab"
+                className={`relative z-10 w-1/2 text-sm font-medium py-1.5 transition-colors rounded-full ${
+                  viewMode === 'preview' 
+                    ? 'text-white' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
+                }`}
+                onClick={() => setViewMode('preview')}
+              >
+                <span className="flex items-center justify-center gap-1">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="16" 
+                    height="16" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    className="hidden sm:inline-block"
+                  >
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Preview
+                </span>
+              </button>
             </div>
-            <div className="col-span-1 w-full h-full space-y-3">
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {viewMode === 'builder' ? (
+            <motion.div
+              key="builder"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:px-5 h-full">
+                <div className="w-full h-full col-span-1 md:space-x-3 md:max-h-[75vh] flex flex-col md:flex-row">
+                  <FieldSelectorWithSeparator
+                    addFormField={addFormField}
+                  />
+                  <div className="overflow-y-auto flex-1">
+                    <FormFieldList
+                      formFields={formFields}
+                      setFormFields={setFormFields}
+                      updateFormField={updateFormField}
+                      openEditDialog={openEditDialog}
+                    />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="preview"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="px-4 md:px-5"
+            >
               <SpecialComponentsNotice formFields={formFields} />
               <FormPreview
                 key={JSON.stringify(formFields)}
                 formFields={formFields}
               />
-            </div>
-          </div>
-        )}
-        otherwise={() => (
-          <div className="flex flex-col md:flex-row items-center gap-3 md:px-5">
-            <FieldSelectorWithSeparator
-              addFormField={(variant: string, index: number = 0, type?: FormFieldCustomType) =>
-                addFormField(variant, index, type)
-              }
-            />
-            <EmptyListSvg className="mx-auto" />
-          </div>
-        )}
-      />
-      <EditFieldDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        field={selectedField}
-        onSave={handleSaveField}
-      />
-    </section>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <EditFieldDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          field={selectedField}
+          onSave={handleSaveField}
+        />
+      </section>
+    </DndProvider>
   )
 }
