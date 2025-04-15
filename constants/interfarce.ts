@@ -11,7 +11,9 @@ interface TechnicalProps {
     min?: number;
     max?: number;
     options?: { value: string; label: string }[];
-    step?: number
+    step?: number;
+    type: 'fields' | 'panels'; // Ajout du type panel
+    children?: string[]; // Optionnel: pour contenir des IDs d'enfants si nécessaire
 }
 
 interface UIProps {
@@ -27,8 +29,12 @@ interface UIProps {
     className?: string;
     iconPrefix?: string;
     iconSuffix?: string;
-    locale?: keyof typeof Locales
-
+    locale?: keyof typeof Locales;
+    direction?: 'row' | 'column'; // Ajout pour les panels flex
+    wrap?: 'wrap' | 'nowrap' | 'wrap-reverse'; // Ajout pour les panels flex
+    gap?: number; // Ajout pour les panels flex
+    justifyContent?: 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly'; // Ajout pour les panels flex
+    alignItems?: 'start' | 'end' | 'center' | 'baseline' | 'stretch'; // Ajout pour les panels flex
 }
 
 interface TransalateType {
@@ -90,6 +96,7 @@ interface DevOnlyProps {
 }
 
 export interface FormFieldCustomType{
+    children: any;
     technical: TechnicalProps;
     ui: UIProps;
     cms: CMSProps;

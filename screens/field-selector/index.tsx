@@ -13,26 +13,33 @@ type FieldSelectorProps = {
 
 // Component for a single draggable field type button
 const DraggableFieldItem = ({ variant, addFormField }: { 
-  variant: { name: string, index: number, isNew?: boolean },
+  variant: { name: string, index: number, isNew?: boolean, isPanel?: boolean },
   addFormField: (variant: string, index?: number, type?: FormFieldCustomType) => void
 }) => {
   // Set up drag functionality
   const [{ isDragging }, drag] = useDrag({
-    type: 'FIELD_TYPE',
-    item: { type: variant.name },
+    type: variant.isPanel ? 'PANEL_TYPE' : 'FIELD_TYPE',
+    item: { 
+      type: variant.name,
+      isPanel: variant.isPanel 
+    },
     collect: (monitor: { isDragging: () => any }) => ({
       isDragging: !!monitor.isDragging(),
     }),
   });
-  const dragRef = useRef<HTMLDivElement>(null);
 
+  const dragRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (dragRef.current) {
       drag(dragRef.current);
     }
-    console.log('dragRef.current', dragRef.current)
   }, [drag]);
+
+    // Style différent pour les panels
+    const panelStyle = variant.isPanel 
+    ? '' 
+    : '';
   
 
   return (
@@ -47,8 +54,9 @@ const DraggableFieldItem = ({ variant, addFormField }: {
         <Button
           key={variant.name}
           variant="outline"
-          // onClick={() => addFormField(variant.name, variant.index)}
-          className={`rounded-full ${isDragging ? 'shadow-lg ring-2 ring-primary/20' : ''}`}
+          className={`rounded-full ${panelStyle} ${
+            isDragging ? 'shadow-lg ring-2 ring-primary/20' : ''
+          }`}
           size="sm"
         >
           {variant.name}

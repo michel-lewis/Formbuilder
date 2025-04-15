@@ -1,4 +1,3 @@
-// Finally, update FormFieldList.tsx to accept dropped field types
 import React, { useState, useCallback, useRef } from 'react'
 import { Reorder, AnimatePresence, motion } from 'framer-motion'
 import { FormFieldType } from '@/types'
@@ -8,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { FormFieldCustomType } from '@/constants/interfarce'
 import { useDrop } from 'react-dnd'
 import { initializeFormField } from '@/constants/global-utils'
-
+import { PanelItem } from '@/components/PanelItem'
 export type FormFieldOrGroup = FormFieldCustomType | FormFieldCustomType[]
 
 type FormFieldListProps = {
@@ -25,14 +24,12 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
   openEditDialog,
 }) => {
   const [rowTabs, setRowTabs] = useState<{ [key: number]: FormFieldCustomType[] }>({})
-  const [dropIndicatorPosition, setDropIndicatorPosition] = useState<number | null>(null);
-  const listRef = useRef<HTMLDivElement | null>(null);
-
+  const [dropIndicatorPosition, setDropIndicatorPosition] = useState<number | null>(null)
+  const listRef = useRef<HTMLDivElement | null>(null)
 
   const handleHorizontalReorder = useCallback(
     (index: number, newOrder: FormFieldCustomType[]) => {
       setRowTabs((prev) => ({ ...prev, [index]: newOrder }))
-
       setTimeout(() => {
         setFormFields((prevFields) => {
           const updatedFields = [...prevFields]
@@ -44,69 +41,83 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
     [setFormFields],
   )
 
-  // Calculate drop position based on mouse position
   const calculateDropIndex = (clientY: number) => {
-    if (!listRef.current || formFields.length === 0) return formFields.length;
+    if (!listRef.current || formFields.length === 0) return formFields.length
     
-    const { top } = listRef.current.getBoundingClientRect();
-    const fieldItems = listRef.current.querySelectorAll('.field-item');
+    const { top } = listRef.current.getBoundingClientRect()
+    const fieldItems = listRef.current.querySelectorAll('.field-item')
     
-    // If there are no items, drop at the beginning
-    if (fieldItems.length === 0) return 0;
+    if (fieldItems.length === 0) return 0
     
-    // Calculate the position for each item
     for (let i = 0; i < fieldItems.length; i++) {
-      const item = fieldItems[i];
-      const { top: itemTop, height } = item.getBoundingClientRect();
-      const itemMiddle = itemTop + height / 2;
+      const item = fieldItems[i]
+      const { top: itemTop, height } = item.getBoundingClientRect()
+      const itemMiddle = itemTop + height / 2
       
       if (clientY < itemMiddle) {
-        return i;
+        return i
       }
     }
     
-    // If after all items, drop at the end
-    return formFields.length;
-  };
+    return formFields.length
+  }
 
-  // Set up drop zone
   const [{ isOver, canDrop }, dropRef] = useDrop({
-    accept: 'FIELD_TYPE',
-    drop: (item: { type: string }, monitor) => {
-      const clientOffset = monitor.getClientOffset();
+    accept: ['FIELD_TYPE', 'PANEL_TYPE'],
+    drop: (item: { type: string; isPanel?: boolean }, monitor) => {
+      const clientOffset = monitor.getClientOffset()
       if (clientOffset) {
-        const dropIndex = calculateDropIndex(clientOffset.y);
-        
-        // Create a new field
-        const newField = initializeFormField(item.type) as FormFieldCustomType;
+        const dropIndex = calculateDropIndex(clientOffset.y)
+        const newField = initializeFormField(item.type) as FormFieldCustomType
         
         if (newField) {
-          const newFields = [...formFields];
-          newFields.splice(dropIndex, 0, newField);
-          setFormFields(newFields);
+          setFormFields((prev) => {
+            const newFields = [...prev]
+            console.log('newField', dropIndex)
+            console.log('newField', newField)
+
+            
+            if (!Array.isArray(newField) && 
+                (newField as FormFieldCustomType).technical?.type === 'panels' && 
+                !item.isPanel) {
+              // Si on drop sur un panel, ajouter le champ dans fields du panel
+              const newFields = [...prev, newField]
+              const panel = newFields[dropIndex] as FormFieldCustomType
+              // if (!Array.isArray(panel.technical.fields)) {
+              //   panel.technical.fields = []
+              // }
+              // panel.technical.fields.push(newField)
+              newFields[dropIndex] = panel
+            } else {
+              // Sinon, ajouter le champ normalement dans la liste
+              newFields.splice(dropIndex, 0, newField)
+            }
+            
+            return newFields
+          })
         }
       }
     },
     hover: (item, monitor) => {
-      const clientOffset = monitor.getClientOffset();
+      const clientOffset = monitor.getClientOffset()
       if (clientOffset) {
-        const dropIndex = calculateDropIndex(clientOffset.y);
-        setDropIndicatorPosition(dropIndex);
+        const dropIndex = calculateDropIndex(clientOffset.y)
+        setDropIndicatorPosition(dropIndex)
       }
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
       canDrop: !!monitor.canDrop(),
     }),
-  });
+  })
 
   return (
     <div 
       ref={(node) => {
-        dropRef(node);
-        listRef.current = node;
+        dropRef(node)
+        listRef.current = node
       }}
-      className={`mt-3 lg:mt-0 min-h-[200px] rounded-lg p-2 ${isOver && canDrop ? 'bg-primary/5 ring-2 ring-primary/20' : ''}`}
+      className={`mt-3 lg:mt-0 min-h-[200px] w-full rounded-lg p-2 border-2 border-dashed ${isOver && canDrop ? 'border-primary/50 bg-primary/5' : 'border-gray-200'}`}
     >
       <Reorder.Group
         axis="y"
@@ -117,8 +128,8 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
         {formFields.map((item, index) => (
           <React.Fragment key={
             Array.isArray(item)
-              ? item.map((f) => f.ui.label).join('-')
-              : item.ui.label
+              ? item.map((f) => f.technical.id).join('-')
+              : (item as FormFieldCustomType).technical.id
           }>
             {dropIndicatorPosition === index && isOver && (
               <motion.div
@@ -134,7 +145,16 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
               whileDrag={{ backgroundColor: '#e5e7eb', borderRadius: '12px' }}
             >
               <LuRows2 className="cursor-grab w-4 h-4" />
-              {Array.isArray(item) ? (
+              {!Array.isArray(item) && item.technical?.inputType === 'panel' ? (
+                <PanelItem
+                  panel={item as FormFieldCustomType}
+                  index={index}
+                  updateFormField={updateFormField}
+                  openEditDialog={openEditDialog}
+                  formFields={formFields}
+                  setFormFields={setFormFields}
+                />
+              ) : Array.isArray(item) ? (
                 <Reorder.Group
                   as="ul"
                   axis="x"
@@ -161,7 +181,7 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
                 </Reorder.Group>
               ) : (
                 <FieldItem
-                  field={item}
+                  field={item as FormFieldCustomType}
                   index={index}
                   formFields={formFields}
                   setFormFields={setFormFields}
@@ -183,7 +203,7 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
       </Reorder.Group>
       
       {formFields.length === 0 && (
-        <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg border-gray-300 p-4">
+        <div className="flex flex-col items-center justify-center h-96 w-full">
           <p className="text-gray-500 text-center">
             Drag field components here to build your form
           </p>

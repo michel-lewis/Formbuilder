@@ -68,6 +68,7 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
           ...baseField.technical,
           inputType: 'text',
           maxLength: 255,
+          type: 'fields',
         },
         ui: {
           ...baseField.ui,
@@ -83,6 +84,7 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
         technical: {
           ...baseField.technical,
           inputType: 'password',
+          type: 'fields',
         },
         ui: {
           ...baseField.ui,
@@ -96,6 +98,7 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
         technical: {
           ...baseField.technical,
           options: [],
+          type: 'fields',
         },
         data: {
           sourceType: 'static',
@@ -108,18 +111,21 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
         technical: {
           ...baseField.technical,
           options: [],
+          type: 'fields',
         },
         data: {
           sourceType: 'static',
           staticOptions: [],
         },
       } as FormFieldCustomType;
+
     case 'Multi Select':
       return {
         ...baseField,
         technical: {
           ...baseField.technical,
           options: [],
+          type: 'fields',
         },
         data: {
           sourceType: 'static',
@@ -130,17 +136,27 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
     case 'Date Picker':
       return {
         ...baseField,
+        technical: {
+          ...baseField.technical,
+          type: 'fields',
+        },
         ui: {
           ...baseField.ui,
-          locale: 'enUS', // Valeur par défaut
+          locale: 'enUS',
         },
       } as FormFieldCustomType;
+
+    // Continuer pour tous les autres cas...
     case 'Datetime Picker':
       return {
         ...baseField,
+        technical: {
+          ...baseField.technical,
+          type: 'fields',
+        },
         ui: {
           ...baseField.ui,
-          locale: 'enUS', // Valeur par défaut
+          locale: 'enUS',
         },
       } as FormFieldCustomType;
 
@@ -150,14 +166,17 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
         technical: {
           ...baseField.technical,
           defaultValue: 'false',
+          type: 'fields',
         },
       } as FormFieldCustomType;
+
     case 'Switch':
       return {
         ...baseField,
         technical: {
           ...baseField.technical,
           defaultValue: 'false',
+          type: 'fields',
         },
       } as FormFieldCustomType;
 
@@ -169,6 +188,7 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
           min: 0,
           max: 100,
           step: 1,
+          type: 'fields',
         },
       } as FormFieldCustomType;
 
@@ -178,6 +198,35 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
         technical: {
           ...baseField.technical,
           inputType: 'file',
+          type: 'fields',
+        },
+      } as FormFieldCustomType;
+
+    case 'Phone':
+      return {
+        ...baseField,
+        technical: {
+          ...baseField.technical,
+          inputType: 'tel',
+          type: 'fields',
+        },
+        ui: {
+          ...baseField.ui,
+          placeholder: '+1 (123) 456-7890',
+        },
+      } as FormFieldCustomType;
+
+    case 'Signature Input':
+      return {
+        ...baseField,
+        technical: {
+          ...baseField.technical,
+          inputType: 'signature',
+          type: 'fields',
+        },
+        ui: {
+          ...baseField.ui,
+          placeholder: 'Sign here',
         },
       } as FormFieldCustomType;
 
@@ -186,51 +235,9 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
         ...baseField,
         technical: {
           ...baseField.technical,
-          maxLength: 1000,
-        },
-      } as FormFieldCustomType;
-    case 'Password':
-      return {
-        ...baseField,
-        technical: {
-          ...baseField.technical,
-          inputType: 'password',
-        },
-        ui: {
-          ...baseField.ui,
-          placeholder: '••••••••',
-        },
-      } as FormFieldCustomType;
-    case 'Phone':
-      return {
-        ...baseField,
-        technical: {
-          ...baseField.technical,
-          inputType: 'tel',
-        },
-        ui: {
-          ...baseField.ui,
-          placeholder: '+1 (123) 456-7890',
-        },
-      } as FormFieldCustomType;
-    case 'Signature Input':
-      return {
-        ...baseField,
-        technical: {
-          ...baseField.technical,
-          inputType: 'signature',
-        },
-        ui: {
-          ...baseField.ui,
-          placeholder: 'Sign here',
-        },
-      } as FormFieldCustomType;
-    case 'Textarea':
-      return {
-        ...baseField,
-        technical: {
-          ...baseField.technical,
           inputType: 'textarea',
+          maxLength: 1000,
+          type: 'fields',
         },
         ui: {
           ...baseField.ui,
@@ -243,12 +250,112 @@ export function initializeFormField(fieldType: string): FormFieldCustomType {
         technical: {
           ...baseField.technical,
           inputType: 'rating',
+          type: 'fields',
         },
         ui: {
           ...baseField.ui,
           placeholder: 'Rate this',
         },
       } as FormFieldCustomType;
+
+    // Le cas Flex Row Panel garde son type 'panels'
+    case 'Flex Row Panel':
+      return {
+        technical: {
+          id: `panel-${Date.now()}`,
+          key: `panel-${Date.now()}`,
+          fieldType: "container",
+          inputType: "panel",
+          type: "panels",
+          fields: []
+        },
+        ui: { 
+          label: "Flex Container", 
+          className: "flex flex-row gap-4",
+          styleVariant: 'outlined',
+          style: {
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '1rem',
+            width: '100%'
+          }
+        },
+        cms: { 
+          translatable: false
+        },
+        validation: { 
+          required: false
+        },
+        layout: {
+          gridColumnSpan: 12
+        }
+      } as FormFieldCustomType;
+      
+    case 'Three Column Row':
+      return {
+        technical: {
+          id: `panel-${Date.now()}`,
+          key: `panel-${Date.now()}`,
+          fieldType: "container",
+          inputType: "panel",
+          type: "panels",
+          fields: []
+        },
+        ui: { 
+          label: "Three Column Layout", 
+          className: "flex flex-row justify-between gap-4",
+          styleVariant: 'outlined',
+          style: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            width: '100%'
+          }
+        },
+        cms: { 
+          translatable: false
+        },
+        validation: { 
+          required: false
+        },
+        layout: {
+          gridColumnSpan: 12
+        }
+      } as FormFieldCustomType;
+
+      case 'Two Column Row':
+      return {
+        technical: {
+          id: `panel-${Date.now()}`,
+          key: `panel-${Date.now()}`,
+          fieldType: "container",
+          inputType: "panel",
+          type: "panels",
+          fields: []
+        },
+        ui: { 
+          label: "Two Column Layout", 
+          className: "grid grid-cols-2 gap-4",
+          styleVariant: 'outlined',
+          style: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '1rem',
+            width: '100%'
+          }
+        },
+        cms: { 
+          translatable: false
+        },
+        validation: { 
+          required: false
+        },
+        layout: {
+          gridColumnSpan: 12
+        }
+      } as FormFieldCustomType;
+      
     default:
       return {
         ...baseField,

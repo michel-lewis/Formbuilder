@@ -4,14 +4,13 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import { Files } from 'lucide-react'
 
 import { renderFormField } from '@/screens/render-form-field'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Form, FormField, FormItem, FormControl } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import If from '@/components/ui/if'
-// import { FormFieldType } from '@/types'
-// import { Files } from 'lucide-react'
 import {
   generateZodSchema,
   generateFormCode,
@@ -27,38 +26,68 @@ export type FormPreviewProps = {
 }
 
 const renderFormFields = (fields: FormFieldOrGroup[], form: any) => {
-  console.log("formfields value ", fields)
+  console.log('Rendering form fields:', fields);
   return fields.map((fieldOrGroup, index) => {
+    // Handle Panels
+    if (!Array.isArray(fieldOrGroup) && fieldOrGroup.technical?.type === 'panels') {
+      return (
+        <div 
+          key={fieldOrGroup.technical.id} 
+          className={fieldOrGroup.ui.className || "p-4 rounded-lg border border-gray-200 bg-gray-50 mb-4"}
+        >
+          {/* <div className="font-medium mb-3">{fieldOrGroup.ui.label}</div> */}
+          <div className={fieldOrGroup.ui.className?.includes('grid') ? '' : 'flex flex-wrap gap-4'}>
+            {fieldOrGroup.children?.map((child: FormFieldCustomType, childIndex: number) => {
+              console.log('Panel child:', child);
+              return (
+                <FormField
+                  key={`${fieldOrGroup.technical.id}-${childIndex}`}
+                  control={form.control}
+                  name={child.ui.label}
+                  render={({ field: formField }) => {
+                    const renderedField = renderFormField(child, form);
+                    return (
+                      <FormItem className={fieldOrGroup.ui.className?.includes('grid') ? '' : 'flex-1 min-w-[200px]'}>
+                        <FormControl>
+                          {renderedField ? React.cloneElement(
+                            renderedField as React.ReactElement,
+                            { ...formField }
+                          ) : <div>Unsupported field type: {child.technical.fieldType}</div>}
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )
+    }
+    
+    // Handle Field Groups (arrays)
     if (Array.isArray(fieldOrGroup)) {
-      // Calculate column span based on number of fields in the group
       const getColSpan = (totalFields: number) => {
         switch (totalFields) {
-          case 2:
-            return 6 // Two columns
-          case 3:
-            return 4 // Three columns
-          default:
-            return 12 // Single column or fallback
+          case 2: return 6
+          case 3: return 4
+          default: return 12
         }
       }
 
       return (
-        <div key={index} className="grid grid-cols-12 gap-4">
+        <div key={index} className="grid grid-cols-12 gap-4 mb-4">
           {fieldOrGroup.map((field, subIndex) => (
             <FormField
-              key={field.ui.label}
+              key={`${index}-${subIndex}`}
               control={form.control}
               name={field.ui.label}
               render={({ field: formField }) => (
-                <FormItem
-                  className={`col-span-${getColSpan(fieldOrGroup.length)}`}
-                >
+                <FormItem className={`col-span-${getColSpan(fieldOrGroup.length)}`}>
                   <FormControl>
                     {React.cloneElement(
                       renderFormField(field, form) as React.ReactElement,
-                      {
-                        ...formField,
-                      },
+                      { ...formField }
                     )}
                   </FormControl>
                 </FormItem>
@@ -67,34 +96,31 @@ const renderFormFields = (fields: FormFieldOrGroup[], form: any) => {
           ))}
         </div>
       )
-    } else {
-      console.log("renderFormField output:", fieldOrGroup)      
-      return (
-        <FormField
-          key={index}
-          control={form.control}
-          name={fieldOrGroup.ui.label}
-          render={({ field: formField }) => (
-            <FormItem className="col-span-12">
-              <FormControl>
-                {React.cloneElement(
-                  renderFormField(fieldOrGroup, form) as React.ReactElement,
-                  {
-                    ...formField,
-                  },
-                )}
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      )
     }
+
+    // Handle Single Fields
+    return (
+      <FormField
+        key={fieldOrGroup.technical.id}
+        control={form.control}
+        name={fieldOrGroup.ui.label}
+        render={({ field: formField }) => (
+          <FormItem className="col-span-12 mb-4">
+            <FormControl>
+              {React.cloneElement(
+                renderFormField(fieldOrGroup, form) as React.ReactElement,
+                { ...formField }
+              )}
+            </FormControl>
+          </FormItem>
+        )}
+      />
+    )
   })
 }
 
 export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
   const formSchema = generateZodSchema(formFields)
-
   const defaultVals = generateDefaultValues(formFields)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -117,25 +143,16 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
 
   const generatedCode = generateFormCode(formFields)
   const formattedCode = formatJSXCode(generatedCode)
-  console.log("formfields ", formFields)
+
   return (
     <div className="w-full h-full col-span-1 rounded-xl flex justify-center">
-      <Tabs defaultValue="preview" className="w-full">
-        <TabsList className="flex justify-center w-fit mx-auto">
-          <TabsTrigger value="preview">Preview</TabsTrigger>
-          <TabsTrigger value="json">JSON</TabsTrigger>
-        </TabsList>
-        <TabsContent
-          value="preview"
-          className="space-y-4 h-full md:max-h-[70vh] overflow-auto"
-        >
           <If
             condition={formFields.length > 0}
             render={() => (
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4 py-5 max-w-lg mx-auto"
+                  className="space-y-4 py-5 w-full max-w-6xl mx-auto border-2 border-dashed border-gray-300 rounded-lg p-6"
                 >
                   {renderFormFields(formFields, form)}
                   <Button type="submit">Submit</Button>
@@ -143,13 +160,13 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
               </Form>
             )}
             otherwise={() => (
-              <div className="h-[50vh] flex justify-center items-center">
+              <div className="h-screen w-full flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg">
                 <p>No form element selected yet.</p>
               </div>
             )}
           />
-        </TabsContent>
-        <TabsContent value="json">
+        
+        {/* <TabsContent value="json">
           <If
             condition={formFields.length > 0}
             render={() => (
@@ -164,8 +181,9 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
             )}
           />
         </TabsContent>
+        
         <TabsContent value="code">
-          {/* <If
+          <If
             condition={formFields.length > 0}
             render={() => (
               <div className="relative">
@@ -178,7 +196,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
                     toast.success('Code copied to clipboard!')
                   }}
                 >
-                  <Files />
+                  <Files className="w-4 h-4" />
                 </Button>
                 <Highlight
                   code={formattedCode}
@@ -193,8 +211,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
                     getTokenProps,
                   }: any) => (
                     <pre
-                      className={`${className} p-4 text-sm bg-gray-100 rounded-lg 
-                      h-full md:max-h-[70vh] overflow-auto`}
+                      className={`${className} p-4 text-sm bg-gray-100 rounded-lg h-full md:max-h-[70vh] overflow-auto`}
                       style={style}
                     >
                       {tokens.map((line: any, i: number) => (
@@ -214,9 +231,8 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ formFields }) => {
                 <p>No form element selected yet.</p>
               </div>
             )}
-          /> */}
-        </TabsContent>
-      </Tabs>
+          />
+        </TabsContent> */}
     </div>
   )
 }

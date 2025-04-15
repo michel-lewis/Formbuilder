@@ -21,6 +21,11 @@ export const fieldTypes: FieldType[] = [
   { name: 'Textarea', isNew: false},
   { name: 'Rating', isNew: true},
   { name: 'RadioGroup', isNew: true},
+  { name: 'Flex Row Panel', isNew: true, isPanel: true },
+  { name: 'Three Column Row', isNew: true, isPanel: true },
+  { name: 'Two Column Row', isNew: true, isPanel: true }
+
+
 ]
 
 export const defaultFieldConfig: Record<

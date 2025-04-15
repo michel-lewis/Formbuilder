@@ -30,7 +30,8 @@ export type FormFieldType = {
   customType?: interfaces.FormField 
 }
 
-export type FieldType = { name: string; isNew: boolean; index?: number}
+export type FieldType = { name: string; isNew: boolean; index?: number, isPanel?: boolean
+}
 
 export interface EditorColumn {
   id: string

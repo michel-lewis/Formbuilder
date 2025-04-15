@@ -106,7 +106,7 @@ export default function FormBuilder() {
       <Separator orientation={isDesktop ? 'vertical' : 'horizontal'} />
     </div>
   )
-  
+  console.log(formFields , "formfields")
   return (
     <DndProvider backend={HTML5Backend}>
       <section className="md:max-h-screen space-y-8">
@@ -209,7 +209,7 @@ export default function FormBuilder() {
                   <FieldSelectorWithSeparator
                     addFormField={addFormField}
                   />
-                  <div className="overflow-y-auto flex-1">
+                  <div className="overflow-y-auto flex-1 w-full">
                     <FormFieldList
                       formFields={formFields}
                       setFormFields={setFormFields}

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { motion, Reorder } from 'framer-motion'
-
 import { cn } from '@/lib/utils'
 import { FormFieldType } from '@/types'
 import { defaultFieldConfig, fieldTypes } from '@/constants'
@@ -14,8 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import If from '@/components/ui/if'
-
-import { LuColumns2, LuPencil, LuTrash2,  } from 'react-icons/lu'
+import { LuColumns2, LuPencil, LuTrash2 } from 'react-icons/lu'
 import { FormFieldCustomType } from '@/constants/interfarce'
 import { initializeFormField } from '@/constants/global-utils'
 
@@ -27,8 +25,9 @@ interface Props {
   field: FormFieldCustomType
   formFields: FormFieldOrGroup[]
   setFormFields: React.Dispatch<React.SetStateAction<FormFieldOrGroup[]>>
-  updateFormField: (path: number[], updates: Partial<FormFieldCustomType>) => void
+  updateFormField?: (path: number[], updates: Partial<FormFieldCustomType>) => void
   openEditDialog: (field: FormFieldCustomType) => void
+  onRemove?: () => void
 }
 
 export const FieldItem = ({
@@ -37,8 +36,9 @@ export const FieldItem = ({
   field,
   formFields,
   setFormFields,
-  updateFormField,
+  // updateFormField,
   openEditDialog,
+  onRemove,
 }: Props) => {
   const showColumnButton =
     subIndex === undefined ||
@@ -51,30 +51,17 @@ export const FieldItem = ({
 
   const addNewColumn = (variant: string, index: number) => {
     const newFieldName = `name_${Math.random().toString().slice(-10)}`
-
-    // Check for duplicates
     const existingFields = Array.isArray(formFields[index])
       ? (formFields[index] as FormFieldCustomType[]).map((field) => field.ui.label)
       : [formFields[index]?.ui.label]
 
-    // Check if the new field name already exists in the existing fields
-    if (existingFields.includes(newFieldName)) {
-      // If a field with the same name exists, do not add a new field
-      return
-    }
-
-    const { label, description, placeholder } = defaultFieldConfig[variant] || {
-      label: '',
-      description: '',
-      placeholder: '',
-    }
+    if (existingFields.includes(newFieldName)) return
 
     const newField: FormFieldCustomType | undefined = initializeFormField(variant) as FormFieldCustomType
 
     setFormFields((prevFields) => {
       const newFields = [...prevFields]
       if (Array.isArray(newFields[index])) {
-        // If it's already an array, check for duplicates before adding
         const currentFieldNames = (newFields[index] as FormFieldCustomType[]).map(
           (field) => field.ui.label,
         )
@@ -82,14 +69,20 @@ export const FieldItem = ({
           ;(newFields[index] as FormFieldCustomType[]).push(newField)
         }
       } else if (newFields[index]) {
-        // If it's a single field, convert it to an array with the existing field and the new one
         newFields[index] = [newFields[index] as FormFieldCustomType, newField]
       } else {
-        // If the index doesn't exist, just add the new field
         newFields[index] = newField
       }
       return newFields
     })
+  }
+
+  const handleRemove = () => {
+    if (onRemove) {
+      onRemove()
+    } else {
+      removeColumn()
+    }
   }
 
   const removeColumn = () => {
@@ -97,6 +90,7 @@ export const FieldItem = ({
     const subIndex = path.length > 1 ? path[1] : null
 
     setFormFields((prevFields) => {
+      console.log("previews fields", prevFields)
       const newFields = [...prevFields]
 
       if (Array.isArray(newFields[rowIndex])) {
@@ -107,7 +101,6 @@ export const FieldItem = ({
 
           if (row.length > 0) {
             newFields[rowIndex] = row
-            // Update column count immediately after removal
             setColumnCount(row.length)
           } else {
             newFields.splice(rowIndex, 1)
@@ -145,17 +138,17 @@ export const FieldItem = ({
       className={cn('w-full', {
         'col-span-12': columnCount === 1,
         'col-span-6': columnCount === 2,
-        'col-span-4': columnCount === 3,
+        'col-span-3': columnCount === 3,
+        'col-span-2': columnCount >= 4,
       })}
       key={`${field.technical.key}-${columnCount}`}
     >
-      {/* Rest of your component JSX */}
       <motion.div
         layout="position"
-        className="flex items-center gap-3"
+        className="flex items-center gap-2"
         key={`${field.ui.label}-${columnCount}`}
       >
-        <div className="flex items-center gap-1 border rounded-xl px-3 py-1.5 w-full">
+        <div className="flex items-center gap-1 border rounded-xl px-2 py-1 w-full">
           <If
             condition={Array.isArray(formFields[index])}
             render={() => <LuColumns2 className="cursor-grab w-4 h-4" />}
@@ -169,7 +162,7 @@ export const FieldItem = ({
             >
               <LuPencil />
             </Button>
-            <Button variant="ghost" size="icon" onClick={removeColumn}>
+            <Button variant="ghost" size="icon" onClick={handleRemove}>
               <LuTrash2 />
             </Button>
           </div>
