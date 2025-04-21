@@ -36,11 +36,12 @@ export default function FormBuilder() {
 
   const addFormField = (variant: string, index: number = formFields.length, type?: FormFieldCustomType) => {
     const newField: FormFieldCustomType | undefined = initializeFormField(variant) as FormFieldCustomType
-    
+    console.log(" new field is it ", newField)
     if (newField) {
       // Create a new array and insert the field at the specified index
       const newFields = [...formFields];
       newFields.splice(index, 0, newField);
+  
       setFormFields(newFields);
     }
   }
@@ -48,17 +49,34 @@ export default function FormBuilder() {
   const findFieldPath = (
     fields: FormFieldOrGroup[],
     name: string,
+    isChildren: boolean,
   ): number[] | null => {
     const search = (
       currentFields: FormFieldOrGroup[],
       currentPath: number[],
     ): number[] | null => {
+      console.log(" current fields is it ", currentFields)
       for (let i = 0; i < currentFields.length; i++) {
         const field = currentFields[i]
-        if (Array.isArray(field)) {
+        if( isChildren == true){
+          console.log("enter ", field )
+          const childrenAsFormFields = Array.isArray(field.children) ? field.children : [];
+          for( let j = 0; j < childrenAsFormFields.length; j++){
+            console.log(" name check ", name)
+            if( childrenAsFormFields[j].technical.id === name){
+              console.log("enter check ", childrenAsFormFields[j])
+              return [...currentPath, i,'children', j]
+            }
+          }
+          console.log(" childrenAsFormFields ", childrenAsFormFields )
+
+        }
+        else if (Array.isArray(field)) {
           const result = search(field, [...currentPath, i])
+          console.log(" result is it  fields", result) // Add this line to check the result value
           if (result) return result
-        } else if (field.ui.label === name) {
+        } else if (isChildren == false && field.ui.label === name) {
+          console.log("enter check ", field, name)
           return [...currentPath, i]
         }
       }
@@ -81,13 +99,19 @@ export default function FormBuilder() {
   }
 
   const openEditDialog = (field: FormFieldCustomType) => {
+    console.log(" fields get ", field)
     setSelectedField(field)
     setIsDialogOpen(true)
   }
 
   const handleSaveField = (updatedField: FormFieldCustomType) => {
+    console.log(" updated field is it ", updatedField)
+    const isChildren = !!updatedField.isChildren  && updatedField.isChildren == true ? updatedField.isChildren : false  // Check if isChildren is true
     if (selectedField) {
-      const path = findFieldPath(formFields, selectedField.ui.label!)
+      console.log(" selected field is it ", selectedField)
+      const name = isChildren == true ? selectedField.technical.id : selectedField.ui.label!
+      const path = findFieldPath(formFields, name, isChildren )
+      console.log(" path is it ", path) // Add this line to check the path value
       if (path) {
         updateFormField(path, updatedField)
       }
@@ -106,49 +130,47 @@ export default function FormBuilder() {
       <Separator orientation={isDesktop ? 'vertical' : 'horizontal'} />
     </div>
   )
-  console.log(formFields , "formfields")
+  console.log(formFields, "formfields")
   return (
     <DndProvider backend={HTML5Backend}>
       <section className="md:max-h-screen space-y-8">
         <div className="max-w-5xl mx-auto space-y-4">
           <h1 className="text-2xl font-semibold">Playground</h1>
-          
+
           <div className="flex justify-center mb-6">
-            <div 
-              role="tablist" 
+            <div
+              role="tablist"
               aria-label="View mode selector"
               className="relative inline-flex items-center bg-gray-100 dark:bg-gray-800 rounded-full p-1 w-48 shadow-inner"
             >
               <motion.div
                 layout
-                className={`absolute w-1/2 h-[calc(100%-0.5rem)] rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-md ${
-                  viewMode === 'builder' ? 'left-1' : 'left-[calc(50%-0.125rem)]'
-                }`}
+                className={`absolute w-1/2 h-[calc(100%-0.5rem)] rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-md ${viewMode === 'builder' ? 'left-1' : 'left-[calc(50%-0.125rem)]'
+                  }`}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
-              
+
               <button
                 role="tab"
                 aria-selected={viewMode === 'builder'}
                 aria-controls="builder-panel"
                 id="builder-tab"
-                className={`relative z-10 w-1/2 text-sm font-medium py-1.5 transition-colors rounded-full ${
-                  viewMode === 'builder' 
-                    ? 'text-white' 
+                className={`relative z-10 w-1/2 text-sm font-medium py-1.5 transition-colors rounded-full ${viewMode === 'builder'
+                    ? 'text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
-                }`}
+                  }`}
                 onClick={() => setViewMode('builder')}
               >
                 <span className="flex items-center justify-center gap-1">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="16" 
-                    height="16" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
                     strokeLinejoin="round"
                     className="hidden sm:inline-block"
                   >
@@ -159,29 +181,28 @@ export default function FormBuilder() {
                   Builder
                 </span>
               </button>
-              
+
               <button
                 role="tab"
                 aria-selected={viewMode === 'preview'}
                 aria-controls="preview-panel"
                 id="preview-tab"
-                className={`relative z-10 w-1/2 text-sm font-medium py-1.5 transition-colors rounded-full ${
-                  viewMode === 'preview' 
-                    ? 'text-white' 
+                className={`relative z-10 w-1/2 text-sm font-medium py-1.5 transition-colors rounded-full ${viewMode === 'preview'
+                    ? 'text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
-                }`}
+                  }`}
                 onClick={() => setViewMode('preview')}
               >
                 <span className="flex items-center justify-center gap-1">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="16" 
-                    height="16" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
                     strokeLinejoin="round"
                     className="hidden sm:inline-block"
                   >
@@ -204,8 +225,8 @@ export default function FormBuilder() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:px-5 h-full">
-                <div className="w-full h-full col-span-1 md:space-x-3 md:max-h-[75vh] flex flex-col md:flex-row">
+              <div className="grid grid-cols-1 md:grid-cols-10 gap-8 md:px-5 h-full ">
+                <div className="w-full h-full col-span-1 md:col-span-6 md:space-x-3 md:max-h-[75vh] flex flex-col md:flex-row bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 p-6">
                   <FieldSelectorWithSeparator
                     addFormField={addFormField}
                   />
@@ -215,6 +236,14 @@ export default function FormBuilder() {
                       setFormFields={setFormFields}
                       updateFormField={updateFormField}
                       openEditDialog={openEditDialog}
+                    />
+                  </div>
+                </div>
+                <div className="w-full h-full col-span-1 md:col-span-4 md:space-x-3 md:max-h-[75vh] flex flex-col md:flex-row bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 p-6">
+                  <div className="overflow-y-auto flex-1 w-full">
+                    <EditFieldDialog
+                      field={selectedField}
+                      onSave={handleSaveField}
                     />
                   </div>
                 </div>
@@ -238,12 +267,7 @@ export default function FormBuilder() {
           )}
         </AnimatePresence>
 
-        <EditFieldDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          field={selectedField}
-          onSave={handleSaveField}
-        />
+
       </section>
     </DndProvider>
   )

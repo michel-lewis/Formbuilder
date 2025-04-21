@@ -60,6 +60,7 @@ export const FieldItem = ({
     const newField: FormFieldCustomType | undefined = initializeFormField(variant) as FormFieldCustomType
 
     setFormFields((prevFields) => {
+      console.log("prevFields", prevFields)
       const newFields = [...prevFields]
       if (Array.isArray(newFields[index])) {
         const currentFieldNames = (newFields[index] as FormFieldCustomType[]).map(
@@ -148,7 +149,7 @@ export const FieldItem = ({
         className="flex items-center gap-2"
         key={`${field.ui.label}-${columnCount}`}
       >
-        <div className="flex items-center gap-1 border rounded-xl px-2 py-1 w-full">
+        <div className="flex items-center gap-1 border border-gray-300 dark:border-gray-500 rounded-xl px-2 py-1 w-full bg-white dark:bg-gray-800">
           <If
             condition={Array.isArray(formFields[index])}
             render={() => <LuColumns2 className="cursor-grab w-4 h-4" />}

@@ -36,7 +36,7 @@ const renderFormFields = (fields: FormFieldOrGroup[], form: any) => {
           className={fieldOrGroup.ui.className || "p-4 rounded-lg border border-gray-200 bg-gray-50 mb-4"}
         >
           {/* <div className="font-medium mb-3">{fieldOrGroup.ui.label}</div> */}
-          <div className={fieldOrGroup.ui.className?.includes('grid') ? '' : 'flex flex-wrap gap-4'}>
+          <div className={fieldOrGroup.ui.className?  fieldOrGroup.ui.className : 'flex flex-wrap gap-4'}>
             {fieldOrGroup.children?.map((child: FormFieldCustomType, childIndex: number) => {
               console.log('Panel child:', child);
               return (

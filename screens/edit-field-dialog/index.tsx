@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as Locales from 'date-fns/locale'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -31,8 +24,6 @@ import { Bold } from 'lucide-react'
 
 
 type EditFieldDialogProps = {
-  isOpen: boolean
-  onClose: () => void
   field: FormFieldCustomType | null
   onSave: (updatedField: FormFieldCustomType) => void
 }
@@ -46,8 +37,6 @@ type MenuItem = {
 };
 
 export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
-  isOpen,
-  onClose,
   field,
   onSave,
 }) => {
@@ -98,13 +87,14 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
   }, [language]);
 
   useEffect(() => {
+    console.log('fields get ', editedField)
     setEditedField(field)
   }, [field])
 
   const handleSave = () => {
+     console.log("edited field", editedField)
     if (editedField) {
       onSave(editedField)
-      onClose()
     }
   }
 
@@ -118,7 +108,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
             <h3 className="text-lg font-semibold">{editedField.technical.fieldType} Validation rules</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 p-3 rounded border">
+                <div className="flex items-center gap-2 p-3 rounded border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-800">
                   <Checkbox
                     checked={editedField?.validation.required}
                     onCheckedChange={(checked) =>
@@ -133,7 +123,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
                   />
                   <Label>{translations[language].find(t => t.id === 'Required')?.value || 'Required'}</Label>
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded border">
+                <div className="flex items-center gap-2 p-3 rounded border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-800">
                   <Checkbox
                     checked={editedField.ui.disabled}
                     onCheckedChange={(checked) =>
@@ -775,11 +765,29 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl h-[80vh] flex">
+    <React.Fragment>
+      <div className="max-w-5xl h-[80vh] flex p-4">
         {/* Sidebar Menu */}
-        <div className="w-56 border-r pr-4 overflow-y-auto">
-          <div className="space-y-1 sticky top-0">
+        
+
+        {/* Main Content */}
+        <div className="flex-1 pl-4 overflow-y-auto p-4">
+          <div>
+            <div>
+              {translations[language].find(t => t.id === 'edit_field')?.value || 'Edit Field'} {editedField.technical.fieldType} Field
+            </div>
+          </div>
+
+          {renderContent()}
+
+          <div className="sticky bottom-0  pt-4 border-t">
+            <Button onClick={handleSave}>
+              {translations[language].find(t => t.id === 'Save changes')?.value || 'Save changes'}
+            </Button>
+          </div>
+        </div>
+        <div className="w-56 border-l pr-4 overflow-y-auto">
+          <div className="space-y-1 sticky top-0 p-3" >
             {menuItems.map((item) => (
               <Button
                 key={item.id}
@@ -797,24 +805,7 @@ export const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
             ))}
           </div>
         </div>
-
-        {/* Main Content */}
-        <div className="flex-1 pl-4 overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {translations[language].find(t => t.id === 'edit_field')?.value || 'Edit Field'} {editedField.technical.fieldType} Field
-            </DialogTitle>
-          </DialogHeader>
-
-          {renderContent()}
-
-          <DialogFooter className="sticky bottom-0 bg-background pt-4 border-t">
-            <Button onClick={handleSave}>
-              {translations[language].find(t => t.id === 'Save changes')?.value || 'Save changes'}
-            </Button>
-          </DialogFooter>
-        </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </React.Fragment>
   )
 }

@@ -72,11 +72,8 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
         
         if (newField) {
           setFormFields((prev) => {
+            console.log(" preveiw form fields ", prev)
             const newFields = [...prev]
-            console.log('newField', dropIndex)
-            console.log('newField', newField)
-
-            
             if (!Array.isArray(newField) && 
                 (newField as FormFieldCustomType).technical?.type === 'panels' && 
                 !item.isPanel) {
@@ -117,7 +114,7 @@ export const FormFieldList: React.FC<FormFieldListProps> = ({
         dropRef(node)
         listRef.current = node
       }}
-      className={`mt-3 lg:mt-0 min-h-[200px] w-full rounded-lg p-2 border-2 border-dashed ${isOver && canDrop ? 'border-primary/50 bg-primary/5' : 'border-gray-200'}`}
+      className={`mt-3 lg:mt-0 min-h-[200px] w-full p-4 rounded-lg p-2 border-2 border-dashed ${isOver && canDrop ? 'border-primary/50 bg-primary/5' : 'border-gray-200'}`}
     >
       <Reorder.Group
         axis="y"

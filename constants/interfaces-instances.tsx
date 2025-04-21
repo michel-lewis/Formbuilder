@@ -278,30 +278,30 @@ export const formFieldsInstances: Record<string, FormFieldCustomType> = {
             gridColumnSpan: 12 // Prend toute la largeur par défaut
         }
     },
-    'Three Column Row':{
-        children: [], // Adding required children property as empty array
-        technical: {
-            id: "threeColumnRow",
-            key: "threeColumnRow",
-            fieldType: "container",
-            inputType: "panel",
-            type: "panels"
-        },
-        ui: { 
-            label: "Three Column Row", 
-            className: "grid grid-cols-3 gap-4 p-4 rounded-lg border-2 border-dashed border-gray-200 w-full",
-            styleVariant: 'outlined'
-        },
-        cms: { 
-            translatable: false
-        },
-        validation: { 
-            required: false
-        },
-        layout: {
-            gridColumnSpan: 12 // Prend toute la largeur par défaut
-        }
+   'Three Column Row': {
+    children: [],
+    technical: {
+        id: "threeColumnRow",
+        key: "threeColumnRow",
+        fieldType: "container",
+        inputType: "panel",
+        type: "panels"
     },
+    ui: { 
+        label: "Three Column Row", 
+        className: "grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-xl border border-gray-300 bg-white shadow-sm",
+        styleVariant: 'outlined'
+    },
+    cms: { 
+        translatable: false
+    },
+    validation: { 
+        required: false
+    },
+    layout: {
+        gridColumnSpan: 12
+    }
+},
 
     'Two Column Row':{
         children: [], // Adding required children property as empty array

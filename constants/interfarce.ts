@@ -106,6 +106,7 @@ export interface FormFieldCustomType{
     layout?: LayoutProps;
     accessibility?: AccessibilityProps;
     devOnly?: DevOnlyProps;
+    isChildren?: boolean;
 }
 
 export type ValidationRules = ValidationProps;

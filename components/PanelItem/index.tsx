@@ -29,6 +29,8 @@ export const PanelItem: React.FC<PanelItemProps> = ({
     accept: 'FIELD_TYPE',
     drop: (item: { type: string }) => {
       const newField = initializeFormField(item.type) as FormFieldCustomType
+      console.log("drop fielsd", newField)
+      newField.isChildren = true;
       if (newField) {
         const updatedPanel = {
           ...panel,
@@ -98,7 +100,7 @@ export const PanelItem: React.FC<PanelItemProps> = ({
             onReorder={(newOrder) => {
               updateFormField([index], { ...panel, children: newOrder })
             }}
-            className="flex flex-wrap gap-3 w-full"
+            className={panel.ui.className}
           >
             {panel.children.map((child: any, childIndex: number | undefined) => (
               <Reorder.Item 
@@ -112,11 +114,11 @@ export const PanelItem: React.FC<PanelItemProps> = ({
                   subIndex={childIndex}
                   formFields={formFields}
                   setFormFields={setFormFields}
-                //   updateFormField={(path, updates) => {
-                //     const updatedChildren = [...panel.technical.children]
-                //     updatedChildren[path[1]] = { ...updatedChildren[path[1]], ...updates }
-                //     updateFormField([index], { ...panel, children: updatedChildren })
-                //   }}
+                  updateFormField={(path, updates) => {
+                    const updatedChildren = [...(panel.children || [])]
+                    updatedChildren[path[1]] = { ...updatedChildren[path[1]], ...updates }
+                    updateFormField([index], { ...panel, children: updatedChildren })
+                  }}
                   openEditDialog={openEditDialog}
                   onRemove={() => childIndex !== undefined && removeChild(childIndex)}
                 />
