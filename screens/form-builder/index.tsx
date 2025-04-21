@@ -50,32 +50,30 @@ export default function FormBuilder() {
     fields: FormFieldOrGroup[],
     name: string,
     isChildren: boolean,
-  ): number[] | null => {
+  ): (string | number)[] | null => {
     const search = (
       currentFields: FormFieldOrGroup[],
       currentPath: number[],
-    ): number[] | null => {
+    ): (number | string)[] | null => {
       console.log(" current fields is it ", currentFields)
       for (let i = 0; i < currentFields.length; i++) {
         const field = currentFields[i]
-        if( isChildren == true){
-          console.log("enter ", field )
+        if (isChildren === true && field && typeof field === 'object' && 'children' in field) {
+          console.log("enter ", field)
           const childrenAsFormFields = Array.isArray(field.children) ? field.children : [];
-          for( let j = 0; j < childrenAsFormFields.length; j++){
+          for (let j = 0; j < childrenAsFormFields.length; j++) {
             console.log(" name check ", name)
-            if( childrenAsFormFields[j].technical.id === name){
+            if (childrenAsFormFields[j] && childrenAsFormFields[j].technical && childrenAsFormFields[j].technical.id === name) {
               console.log("enter check ", childrenAsFormFields[j])
-              return [...currentPath, i,'children', j]
+              return [...currentPath, i, 'children', j]
             }
           }
-          console.log(" childrenAsFormFields ", childrenAsFormFields )
-
         }
         else if (Array.isArray(field)) {
           const result = search(field, [...currentPath, i])
-          console.log(" result is it  fields", result) // Add this line to check the result value
+          console.log(" result is it  fields", result)
           if (result) return result
-        } else if (isChildren == false && field.ui.label === name) {
+        } else if (isChildren === false && field && field.ui && field.ui.label === name) {
           console.log("enter check ", field, name)
           return [...currentPath, i]
         }
@@ -85,7 +83,7 @@ export default function FormBuilder() {
     return search(fields, [])
   }
 
-  const updateFormField = (path: number[], updates: Partial<FormFieldCustomType>) => {
+  const updateFormField = (path: (string | number)[], updates: Partial<FormFieldCustomType>) => {
     const updatedFields = JSON.parse(JSON.stringify(formFields)) // Deep clone
     let current: any = updatedFields
     for (let i = 0; i < path.length - 1; i++) {
