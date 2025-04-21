@@ -91,7 +91,6 @@ export const FieldItem = ({
     const subIndex = path.length > 1 ? path[1] : null
 
     setFormFields((prevFields) => {
-      console.log("previews fields", prevFields)
       const newFields = [...prevFields]
 
       if (Array.isArray(newFields[rowIndex])) {

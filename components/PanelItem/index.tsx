@@ -29,7 +29,6 @@ export const PanelItem: React.FC<PanelItemProps> = ({
     accept: 'FIELD_TYPE',
     drop: (item: { type: string }) => {
       const newField = initializeFormField(item.type) as FormFieldCustomType
-      console.log("drop fielsd", newField)
       newField.isChildren = true;
       if (newField) {
         const updatedPanel = {
